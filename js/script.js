@@ -3,15 +3,23 @@ let currentStep = 1;
 let ownerDetails = {};
 let selectedTemplate = '';
 
-// Global variable to track the current font class
+// Global variables for current state
 let currentFontClass = 'font-cinzel';
 let currentShapeClass = 'shape-circle';
+let currentPositionClass = 'pos-bottom-center';
+let currentFontSize = 28;
+
+const DEFAULT_SHOP_NAME = "Happy Diwali & Dussehra!";
+const DEFAULT_OWNER_NAME = "From: SK Technologies";
+const DEFAULT_PHONE = "999-999-9999";
+const DEFAULT_LOGO = "assets/Logo.jpg"; // Placeholder path
 
 const FONT_OPTIONS = [
     { name: 'Divine Cinzel', class: 'font-cinzel' },
     { name: 'Flowing Vibes', class: 'font-great-vibes' },
-    { name: 'Modern Poppins', class: 'font-poppins' },
-    { name: 'Bold Bebas', class: 'font-bebas-neue' },
+    { name: 'Bold Poppins', class: 'font-poppins' },
+    { name: 'Display Bungee', class: 'font-bungee' },
+    { name: 'Heavy Montserrat', class: 'font-montserrat-black' },
     { name: 'Slab Serif', class: 'font-roboto-slab' },
     { name: 'Clean Inter', class: 'font-inter' },
 ];
@@ -21,6 +29,22 @@ const SHAPE_OPTIONS = [
     { name: 'Sharp Square', class: 'shape-square' },
     { name: 'Rounded Box', class: 'shape-rounded-box' },
     { name: 'Star-ish Cut', class: 'shape-star' },
+];
+
+const POSITION_OPTIONS = [
+    { name: 'Top Left', class: 'pos-top-left' },
+    { name: 'Top Center', class: 'pos-top-center' },
+    { name: 'Top Right', class: 'pos-top-right' },
+    { name: 'Bottom Left', class: 'pos-bottom-left' },
+    { name: 'Center', class: 'pos-center-middle' },
+    { name: 'Bottom Right', class: 'pos-bottom-right' },
+];
+
+const COLOR_PRESETS = [
+    { name: 'Divine Gold', text: '#FFFFFF', accent: '#D4AF37' },
+    { name: 'Ruby Red', text: '#FFFFFF', accent: '#E0115F' },
+    { name: 'Deep Sapphire', text: '#ADD8E6', accent: '#007FFF' },
+    { name: 'Emerald', text: '#FFFFFF', accent: '#00A86B' },
 ];
 
 
@@ -48,31 +72,32 @@ function nextStep(step){
         initializeControls();
     }
 
-    // scroll into view for mobile friendliness
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-/* Save details + read logo file */
+/* Save details + read logo file (Now optional) */
 function saveDetails(){
     const shop = document.getElementById('shopName').value.trim();
     const owner = document.getElementById('ownerName').value.trim();
     const phone = document.getElementById('phone').value.trim();
     const logoFile = document.getElementById('logo').files[0];
 
-    if(!shop || !owner || !phone || !logoFile){
-        showMessage('Please fill all details and upload logo.');
-        return;
-    }
-    ownerDetails.shopName = shop;
-    ownerDetails.ownerName = owner;
-    ownerDetails.phone = phone;
+    ownerDetails.shopName = shop || DEFAULT_SHOP_NAME;
+    ownerDetails.ownerName = owner || DEFAULT_OWNER_NAME;
+    ownerDetails.phone = phone || DEFAULT_PHONE;
+    ownerDetails.logoSrc = DEFAULT_LOGO; // Default to existing logo path
 
-    const reader = new FileReader();
-    reader.onload = function(e){
-        ownerDetails.logoSrc = e.target.result;
+    if(logoFile){
+        const reader = new FileReader();
+        reader.onload = function(e){
+            ownerDetails.logoSrc = e.target.result;
+            nextStep(3);
+        };
+        reader.readAsDataURL(logoFile);
+    } else {
+        // Continue immediately if no file is uploaded (since it's optional)
         nextStep(3);
-    };
-    reader.readAsDataURL(logoFile);
+    }
 }
 
 /* Select template and prepare preview */
@@ -86,22 +111,30 @@ function selectTemplate(imgSrc){
     const phoneEl = document.getElementById('overlayPhone');
 
     bg.src = imgSrc;
-    // overlay text & owner
-    text.textContent = ownerDetails.shopName || '';
-    ownerEl.textContent = ownerDetails.ownerName ? 'By: ' + ownerDetails.ownerName : '';
-    phoneEl.textContent = ownerDetails.phone ? '📞 ' + ownerDetails.phone : '';
-    // overlay logo data-url
+    
+    // Set text contents from saved or default details
+    text.textContent = ownerDetails.shopName;
+    ownerEl.textContent = ownerDetails.ownerName;
+    phoneEl.textContent = ownerDetails.phone;
+    
+    // Set logo source
     if(ownerDetails.logoSrc){
         logo.src = ownerDetails.logoSrc;
         logo.style.display = 'block';
     } else {
+        // Hide logo if neither default nor uploaded
         logo.style.display = 'none';
     }
 
     // Apply current styles on selection
     applyFontClasses(currentFontClass);
     applyShapeClasses(currentShapeClass);
+    applyPositionClass(currentPositionClass);
     
+    // Update color inputs to reflect current settings
+    updateColor('text', document.getElementById('textColorInput').value);
+    updateColor('accent', document.getElementById('accentColorInput').value);
+
     // little visual pop
     const card = document.querySelector('.status-card');
     card.classList.add('zoomIn');
@@ -132,12 +165,11 @@ document.addEventListener('click', function onFirstClick(){
     document.removeEventListener('click', onFirstClick);
 });
 
-/* Floating diyas - ensure working (using placeholder image) */
+/* Floating diyas - ensure working (using local asset) */
 function createFloatingDiyas(count = 8){
     const container = document.getElementById('diya-container');
     if(!container) return;
-    // Placeholder for diya image
-    const diyaSrc = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MCA1MCI+PHBhdGggZmlsbD0iI0ZGQjMzMyIgZD0iTTI1LDQ4QTE4LDE4LDAsMCwxLDcsMzBjMC00LjE2LDEuNTMtNy43OCw0LjU2LTEwLjYxTDExLjU1LDE5QTEyLDEyLDAsMCwxLDE5LDYuMDRsMy41Ni01LjQ4YTQuMDgsNC4wOCwwLDAsMSw1Ljg4LDByMy41Niw1LjQ4YTEyLDEyLDAsMCwxLDcuNDUsMTIuOTZMMzguNDMsMTkuMzljMy4wMywyLjg0LDQuNTYsNi40NSw0LjU2LDEwLjYxQTE4LDE4LDAsMCwxLDI1LDQ4WiI+PC9wYXRoPjxwYXRoIGZpbGw9IiNGRkFBMDAiIGQ9Ik0yNSw0OGExOCwxOCwwLDAsMS0xNC02LjQ4TDI1LDMwLjEybDM5LDExLjRBMjIuMjIsMjIuMjIsMCwwLDEsNDMsNDIuMTJBNTIsNTIsMCwwLDAsMjUsNDhaIj48L3BhdGg+PHBhdGggZmlsbD0iI0ZGRkYwMCIgZD0iTTIzLDMyYy0uNzgtLjI1LTEuNDgtLjYzLTEuNzctMS42NC0uNzMtMi41MSwxLjE0LTUuODIsNC43MS05LjUzLDMuNTctMy43MSw1LjQzLTcuMDIsNC43MS05LjUzYy0uNjItMi4xNC0zLjA5LTIuMTQtMy43MSwwYy0uNzgsMi41MS0yLjc0LDIuOTctNC40NCwyLjYxYTMuNTQsMy41NCwwLDAsMS0uNjUtLjcyYy0xLjQzLTIuNzItLjIxLTguMTYsMS44Ny0xMC44MnMxMS40Ny0yLjczLDEyLjQsMS44M2MxLjgsOC43Ny0yLjE4LDE3LjgyLTUuNDksMjEuMTNzLTIuMjQsMS43LTIuNTksMS40OFoiPjwvcGF0aD48L3N2Zz4=';
+    const diyaSrc = 'assets/diya.png'; 
     
     for(let i=0;i<count;i++){
         const img = document.createElement('img');
@@ -169,14 +201,26 @@ window.addEventListener('load', ()=>{
 // --- NEW CUSTOMIZATION FUNCTIONS ---
 
 function initializeControls() {
-    const fontControls = document.getElementById('fontControls');
-    const shapeControls = document.getElementById('shapeControls');
+    // Check if controls are already initialized
+    if (document.getElementById('fontControls').children.length > 0) return;
 
-    // 1. Initialize Font Buttons
-    fontControls.innerHTML = '';
-    FONT_OPTIONS.forEach(option => {
+    // 1. Initialize Color Preset Buttons
+    const colorPresets = document.getElementById('colorPresets');
+    COLOR_PRESETS.forEach(option => {
         const button = document.createElement('button');
         button.textContent = option.name;
+        button.className = 'option-button';
+        button.style.backgroundColor = option.accent;
+        button.style.color = option.text === '#FFFFFF' ? '#2B2B2B' : option.text;
+        button.onclick = () => applyPreset(option);
+        colorPresets.appendChild(button);
+    });
+
+    // 2. Initialize Font Buttons
+    const fontControls = document.getElementById('fontControls');
+    FONT_OPTIONS.forEach(option => {
+        const button = document.createElement('button');
+        button.textContent = option.name.split(' ')[0]; // Use first word for compact button
         button.className = 'option-button ' + option.class;
         if (option.class === currentFontClass) {
             button.classList.add('active');
@@ -185,8 +229,21 @@ function initializeControls() {
         fontControls.appendChild(button);
     });
 
-    // 2. Initialize Shape Buttons
-    shapeControls.innerHTML = '';
+    // 3. Initialize Position Buttons
+    const positionControls = document.getElementById('positionControls');
+    POSITION_OPTIONS.forEach(option => {
+        const button = document.createElement('button');
+        button.textContent = option.name;
+        button.className = 'option-button';
+        if (option.class === currentPositionClass) {
+            button.classList.add('active');
+        }
+        button.onclick = () => updatePosition(option.class, button);
+        positionControls.appendChild(button);
+    });
+
+    // 4. Initialize Shape Buttons
+    const shapeControls = document.getElementById('shapeControls');
     SHAPE_OPTIONS.forEach(option => {
         const button = document.createElement('button');
         button.textContent = option.name;
@@ -197,8 +254,19 @@ function initializeControls() {
         button.onclick = () => updateShape(option.class, button);
         shapeControls.appendChild(button);
     });
+    
+    // Set initial size display
+    document.getElementById('currentFontSize').textContent = currentFontSize;
+    document.getElementById('fontSizeSlider').value = currentFontSize;
+    document.getElementById('overlayText').style.fontSize = currentFontSize + 'px';
 }
 
+function applyPreset(preset) {
+    document.getElementById('textColorInput').value = preset.text;
+    document.getElementById('accentColorInput').value = preset.accent;
+    updateColor('text', preset.text);
+    updateColor('accent', preset.accent);
+}
 
 // Function to remove old font classes and apply new ones
 function applyFontClasses(newFontClass) {
@@ -219,6 +287,29 @@ function applyFontClasses(newFontClass) {
 // Font Update Logic
 function updateFont(newFontClass, clickedButton) {
     applyFontClasses(newFontClass);
+
+    // Update active state of buttons
+    const buttons = clickedButton.parentElement.querySelectorAll('.option-button');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    clickedButton.classList.add('active');
+}
+
+// Size Update Logic (NEW)
+function updateSize(size) {
+    currentFontSize = size;
+    document.getElementById('overlayText').style.fontSize = size + 'px';
+    document.getElementById('currentFontSize').textContent = size;
+}
+
+// Position Update Logic (NEW)
+function updatePosition(newPositionClass, clickedButton) {
+    const container = document.getElementById('overlayTextContainer');
+    // Remove old position classes
+    POSITION_OPTIONS.forEach(p => container.classList.remove(p.class));
+    
+    // Apply new position class
+    container.classList.add(newPositionClass);
+    currentPositionClass = newPositionClass;
 
     // Update active state of buttons
     const buttons = clickedButton.parentElement.querySelectorAll('.option-button');
