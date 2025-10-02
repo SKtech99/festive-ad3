@@ -10,9 +10,9 @@ let currentPositionClass = 'pos-bottom-center';
 let currentFontSize = 28;
 
 const DEFAULT_SHOP_NAME = "Happy Diwali & Dussehra!";
-const DEFAULT_OWNER_NAME = "From: SK Technologies";
+const DEFAULT_OWNER_NAME = "From: Your Shop Name";
 const DEFAULT_PHONE = "999-999-9999";
-const DEFAULT_LOGO = "assets/Logo.jpg"; // Placeholder path
+const DEFAULT_LOGO = "assets/Logo.jpg"; // Path to your default Logo asset
 
 const FONT_OPTIONS = [
     { name: 'Divine Cinzel', class: 'font-cinzel' },
@@ -82,65 +82,72 @@ function saveDetails(){
     const phone = document.getElementById('phone').value.trim();
     const logoFile = document.getElementById('logo').files[0];
 
+    // Assign saved values or default placeholders
     ownerDetails.shopName = shop || DEFAULT_SHOP_NAME;
     ownerDetails.ownerName = owner || DEFAULT_OWNER_NAME;
     ownerDetails.phone = phone || DEFAULT_PHONE;
-    ownerDetails.logoSrc = DEFAULT_LOGO; // Default to existing logo path
+    ownerDetails.logoSrc = DEFAULT_LOGO; 
 
     if(logoFile){
         const reader = new FileReader();
         reader.onload = function(e){
             ownerDetails.logoSrc = e.target.result;
-            nextStep(3);
+            nextStep(3); // ASYNC PATH
         };
         reader.readAsDataURL(logoFile);
     } else {
-        // Continue immediately if no file is uploaded (since it's optional)
-        nextStep(3);
+        // Continue immediately if no file is uploaded (SYNC PATH)
+        nextStep(3); 
     }
 }
 
 /* Select template and prepare preview */
 function selectTemplate(imgSrc){
-    selectedTemplate = imgSrc;
-    
-    const bg = document.getElementById('statusBg');
-    const logo = document.getElementById('overlayLogo');
-    const text = document.getElementById('overlayText');
-    const ownerEl = document.getElementById('overlayOwner');
-    const phoneEl = document.getElementById('overlayPhone');
+    try {
+        selectedTemplate = imgSrc;
+        
+        const bg = document.getElementById('statusBg');
+        const logo = document.getElementById('overlayLogo');
+        const text = document.getElementById('overlayText');
+        const ownerEl = document.getElementById('overlayOwner');
+        const phoneEl = document.getElementById('overlayPhone');
 
-    bg.src = imgSrc;
-    
-    // Set text contents from saved or default details
-    text.textContent = ownerDetails.shopName;
-    ownerEl.textContent = ownerDetails.ownerName;
-    phoneEl.textContent = ownerDetails.phone;
-    
-    // Set logo source
-    if(ownerDetails.logoSrc){
-        logo.src = ownerDetails.logoSrc;
-        logo.style.display = 'block';
-    } else {
-        // Hide logo if neither default nor uploaded
-        logo.style.display = 'none';
+        bg.src = imgSrc;
+        
+        // Set text contents from saved or default details for live editing
+        text.textContent = ownerDetails.shopName;
+        ownerEl.textContent = ownerDetails.ownerName;
+        phoneEl.textContent = ownerDetails.phone;
+        
+        // Set logo source
+        if(ownerDetails.logoSrc){
+            logo.src = ownerDetails.logoSrc;
+            logo.style.display = 'block';
+        } else {
+            logo.style.display = 'none';
+        }
+
+        // Apply current styles
+        applyFontClasses(currentFontClass);
+        applyShapeClasses(currentShapeClass);
+        applyPositionClass(currentPositionClass);
+        
+        // Ensure color and size inputs match current visual state
+        document.getElementById('overlayText').style.fontSize = currentFontSize + 'px';
+        updateColor('text', document.getElementById('textColorInput').value);
+        updateColor('accent', document.getElementById('accentColorInput').value);
+        
+        // little visual pop
+        const card = document.querySelector('.status-card');
+        card.classList.add('zoomIn');
+        setTimeout(()=>card.classList.remove('zoomIn'),900);
+
+        // This is the critical line to fix the navigation issue
+        nextStep(4);
+    } catch (e) {
+        console.error("Error during template selection:", e);
+        showMessage("An error occurred preparing the preview. Try refreshing.");
     }
-
-    // Apply current styles on selection
-    applyFontClasses(currentFontClass);
-    applyShapeClasses(currentShapeClass);
-    applyPositionClass(currentPositionClass);
-    
-    // Update color inputs to reflect current settings
-    updateColor('text', document.getElementById('textColorInput').value);
-    updateColor('accent', document.getElementById('accentColorInput').value);
-
-    // little visual pop
-    const card = document.querySelector('.status-card');
-    card.classList.add('zoomIn');
-    setTimeout(()=>card.classList.remove('zoomIn'),900);
-
-    nextStep(4);
 }
 
 /* Download status as PNG using html2canvas */
@@ -201,59 +208,65 @@ window.addEventListener('load', ()=>{
 // --- NEW CUSTOMIZATION FUNCTIONS ---
 
 function initializeControls() {
-    // Check if controls are already initialized
-    if (document.getElementById('fontControls').children.length > 0) return;
-
     // 1. Initialize Color Preset Buttons
     const colorPresets = document.getElementById('colorPresets');
-    COLOR_PRESETS.forEach(option => {
-        const button = document.createElement('button');
-        button.textContent = option.name;
-        button.className = 'option-button';
-        button.style.backgroundColor = option.accent;
-        button.style.color = option.text === '#FFFFFF' ? '#2B2B2B' : option.text;
-        button.onclick = () => applyPreset(option);
-        colorPresets.appendChild(button);
-    });
+    if (colorPresets.children.length === 0) {
+        COLOR_PRESETS.forEach(option => {
+            const button = document.createElement('button');
+            button.textContent = option.name;
+            button.className = 'option-button';
+            button.style.backgroundColor = option.accent;
+            button.style.color = option.text === '#FFFFFF' ? '#2B2B2B' : option.text;
+            button.onclick = () => applyPreset(option);
+            colorPresets.appendChild(button);
+        });
+    }
 
     // 2. Initialize Font Buttons
     const fontControls = document.getElementById('fontControls');
-    FONT_OPTIONS.forEach(option => {
-        const button = document.createElement('button');
-        button.textContent = option.name.split(' ')[0]; // Use first word for compact button
-        button.className = 'option-button ' + option.class;
-        if (option.class === currentFontClass) {
-            button.classList.add('active');
-        }
-        button.onclick = () => updateFont(option.class, button);
-        fontControls.appendChild(button);
-    });
+    if (fontControls.children.length === 0) {
+        FONT_OPTIONS.forEach(option => {
+            const button = document.createElement('button');
+            button.textContent = option.name.split(' ')[0]; 
+            button.className = 'option-button ' + option.class;
+            if (option.class === currentFontClass) {
+                button.classList.add('active');
+            }
+            button.onclick = () => updateFont(option.class, button);
+            fontControls.appendChild(button);
+        });
+    }
 
     // 3. Initialize Position Buttons
     const positionControls = document.getElementById('positionControls');
-    POSITION_OPTIONS.forEach(option => {
-        const button = document.createElement('button');
-        button.textContent = option.name;
-        button.className = 'option-button';
-        if (option.class === currentPositionClass) {
-            button.classList.add('active');
-        }
-        button.onclick = () => updatePosition(option.class, button);
-        positionControls.appendChild(button);
-    });
+    if (positionControls.children.length === 0) {
+        POSITION_OPTIONS.forEach(option => {
+            const button = document.createElement('button');
+            button.textContent = option.name;
+            button.className = 'option-button';
+            if (option.class === currentPositionClass) {
+                button.classList.add('active');
+            }
+            button.onclick = () => updatePosition(option.class, button);
+            positionControls.appendChild(button);
+        });
+    }
+
 
     // 4. Initialize Shape Buttons
     const shapeControls = document.getElementById('shapeControls');
-    SHAPE_OPTIONS.forEach(option => {
-        const button = document.createElement('button');
-        button.textContent = option.name;
-        button.className = 'option-button';
-        if (option.class === currentShapeClass) {
-            button.classList.add('active');
-        }
-        button.onclick = () => updateShape(option.class, button);
-        shapeControls.appendChild(button);
-    });
+    if (shapeControls.children.length === 0) {
+        SHAPE_OPTIONS.forEach(option => {
+            const button = document.createElement('button');
+            button.textContent = option.name;
+            button.className = 'option-button';
+            if (option.class === currentShapeClass) {
+                button.classList.add('active');
+            }
+            button.onclick = () => updateShape(option.class, button);
+            shapeControls.appendChild(button);
+        });
+    }
     
     // Set initial size display
     document.getElementById('currentFontSize').textContent = currentFontSize;
@@ -262,8 +275,11 @@ function initializeControls() {
 }
 
 function applyPreset(preset) {
+    // Update color inputs
     document.getElementById('textColorInput').value = preset.text;
     document.getElementById('accentColorInput').value = preset.accent;
+    
+    // Apply colors immediately
     updateColor('text', preset.text);
     updateColor('accent', preset.accent);
 }
@@ -304,6 +320,7 @@ function updateSize(size) {
 // Position Update Logic (NEW)
 function updatePosition(newPositionClass, clickedButton) {
     const container = document.getElementById('overlayTextContainer');
+    
     // Remove old position classes
     POSITION_OPTIONS.forEach(p => container.classList.remove(p.class));
     
