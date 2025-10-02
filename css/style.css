@@ -10,7 +10,7 @@
 }
 
 /* NEW FONT CLASSES (Including Bolder Options) */
-@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel:wght@500;700&family=Poppins:wght@300;400;600&family=Bebas+Neue&family=Roboto+Slab:wght@400;700&family=Inter:wght@400;700&family=Bungee&family=Montserrat:wght@900&display=swap');
+/* The @import is not strictly needed here since links are in HTML, but kept for clarity */
 .font-great-vibes { font-family: 'Great Vibes', cursive; }
 .font-cinzel { font-family: 'Cinzel', serif; }
 .font-poppins { font-family: 'Poppins', sans-serif; }
@@ -124,6 +124,9 @@ body{
 .grid-options.cols-3 {
     grid-template-columns: repeat(3, 1fr);
 }
+.grid-options.cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
 
 
 .option-button {
@@ -173,7 +176,6 @@ body{
     overflow:hidden;
     
     /* PREMIUM GLITTER FRAME EFFECT */
-    /* Base border color using accent */
     border: 10px solid var(--accent); 
     background:#fff;
     box-shadow: 
@@ -220,14 +222,12 @@ body{
     display: flex;
     flex-direction: column;
     gap: 8px;
-    
-    /* Default is Bottom Center (applied via JS, but base style here) */
+    transition: all 0.3s ease;
+    /* Default position */
     left: 0;
     right: 0;
     margin: auto;
     bottom: 18px; 
-    
-    transition: all 0.3s ease;
 }
 
 /* Individual Text Styles */
@@ -258,6 +258,12 @@ body{
     text-shadow:0 3px 10px rgba(0,0,0,0.5);
     outline: none;
 }
+/* Style contenteditable hover */
+[contenteditable="true"]:focus, [contenteditable="true"]:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    cursor: text;
+}
 
 
 /* POSITION CLASSES */
@@ -267,6 +273,7 @@ body{
 .pos-bottom-left { top: auto; bottom: 18px; left: 18px; right: auto; text-align: left; align-items: flex-start; }
 .pos-bottom-center { top: auto; bottom: 18px; left: 0; right: 0; text-align: center; align-items: center; }
 .pos-bottom-right { top: auto; bottom: 18px; left: auto; right: 18px; text-align: right; align-items: flex-end; }
+/* Center Middle needs special handling to center vertically */
 .pos-center-middle { top: 0; bottom: 0; left: 0; right: 0; height: 100%; justify-content: center; align-items: center; text-align: center; }
 
 /* qr & payment */
@@ -313,8 +320,7 @@ body{
     .title{font-size:34px}
     .template-card{width:100%}
     .status-card{width:92%}
-    .overlay-text{font-size:20px;bottom:90px}
-    .overlay-logo{width:64px;height:64px}
+    /* We no longer need fixed bottom values since .overlay-text-container handles position */
 }
 
 /* Message Box for replacing alert() */
