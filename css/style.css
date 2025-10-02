@@ -1,36 +1,44 @@
 /* ====== base / fonts / colors ====== */
 :root{
-  --bg1: #fff7ed;
-  --accent: #c27a00;
-  --gold: #ffd64d;
-  --maroon: #9b1c1c;
-  --soft: #f6e7d2;
-  --text: #2b2b2b;
-  --card-w: 360px;
+    --bg1: #fff7ed;
+    --accent: #c27a00; /* Default Accent */
+    --gold: #ffd64d;
+    --maroon: #9b1c1c;
+    --soft: #f6e7d2;
+    --text: #2b2b2b;
+    --card-w: 360px;
 }
+
+/* NEW FONT CLASSES */
+.font-great-vibes { font-family: 'Great Vibes', cursive; }
+.font-cinzel { font-family: 'Cinzel', serif; }
+.font-poppins { font-family: 'Poppins', sans-serif; }
+.font-bebas-neue { font-family: 'Bebas Neue', sans-serif; }
+.font-roboto-slab { font-family: 'Roboto Slab', serif; }
+.font-inter { font-family: 'Inter', sans-serif; }
 
 /* reset & layout */
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{
-  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  background: linear-gradient(180deg,var(--bg1),#fff1e6);
-  color:var(--text);
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-  padding:18px 14px;
+    font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: linear-gradient(180deg,var(--bg1),#fff1e6);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding:18px 14px;
 }
 
 /* page container */
-.page{max-width:980px;margin:0 auto}
+.page{max-width:1200px;margin:0 auto} /* Increased max-width to accommodate controls in step 4 */
 .masthead{text-align:center;margin-bottom:14px}
 .logo{width:110px;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,0.12)}
 .title{
-  font-family:"Great Vibes", serif;
-  font-size:48px;
-  color:var(--maroon);
-  margin:8px 0 4px;
-  text-shadow:0 3px 0 rgba(0,0,0,0.05);
+    font-family:"Great Vibes", serif;
+    font-size:48px;
+    color:var(--maroon);
+    margin:8px 0 4px;
+    text-shadow:0 3px 0 rgba(0,0,0,0.05);
 }
 .subtitle{color:#6b4b2a;font-size:15px;margin-bottom:8px}
 
@@ -45,9 +53,9 @@ body{
 
 /* buttons */
 .btn{
-  display:inline-block;padding:12px 22px;border-radius:999px;border:none;background:linear-gradient(90deg,var(--accent),#f59e0b);color:white;font-weight:600;
-  box-shadow:0 8px 30px rgba(197,122,0,0.18);
-  cursor:pointer;font-size:16px;margin:8px 6px;transition:transform .18s ease,box-shadow .18s ease;
+    display:inline-block;padding:12px 22px;border-radius:999px;border:none;background:linear-gradient(90deg,var(--accent),#f59e0b);color:white;font-weight:600;
+    box-shadow:0 8px 30px rgba(197,122,0,0.18);
+    cursor:pointer;font-size:16px;margin:8px 6px;transition:transform .18s ease,box-shadow .18s ease;
 }
 .btn:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(197,122,0,0.26)}
 .btn.primary{background:linear-gradient(90deg,#d97706,#f59e0b)}
@@ -55,9 +63,9 @@ body{
 
 /* forms */
 .form{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
-.form input[type="text"], .form input[type="tel"]{
-  padding:12px;border-radius:10px;border:2px solid rgba(155,28,28,0.08);font-size:16px;width:100%;
-  background:white;box-shadow:inset 0 3px 8px rgba(0,0,0,0.03);
+.form input[type="text"], .form input[type="tel"], .form textarea{ /* Added textarea */
+    padding:12px;border-radius:10px;border:2px solid rgba(155,28,28,0.08);font-size:16px;width:100%;
+    background:white;box-shadow:inset 0 3px 8px rgba(0,0,0,0.03);
 }
 .file-label{display:block;padding:10px;border-radius:10px;background:#fff;margin:6px auto;border:2px dashed rgba(0,0,0,0.06);text-align:center;font-size:14px;cursor:pointer}
 .file-label input{display:none}
@@ -69,12 +77,92 @@ body{
 .template-card img{width:100%;height:160px;object-fit:cover;display:block}
 .template-caption{padding:8px;font-weight:700;color:var(--maroon);font-family:"Cinzel",serif;text-align:center;background:linear-gradient(90deg,#fff6e0,#ffe99b)}
 
+/* STEP 4 LAYOUT (NEW) */
+.step4-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+@media (min-width: 900px) {
+    .step4-content {
+        flex-direction: row;
+    }
+}
+
+/* Customization Panel Styling */
+.customization-panel {
+    flex: 1;
+    padding: 18px;
+    background: var(--soft);
+    border-radius: 12px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+}
+
+.controls-group {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.control-label {
+    display: block;
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    color: var(--maroon);
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+.grid-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.option-button {
+    padding: 8px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background: white;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+}
+.option-button:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+.option-button.active {
+    background: var(--maroon);
+    color: white;
+    border-color: var(--gold);
+    box-shadow: 0 4px 10px rgba(155,28,28,0.4);
+}
+
+/* Color Inputs */
+.color-input-wrap input[type="color"] {
+    width: 100%;
+    height: 38px;
+    padding: 2px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
 /* status preview card */
-.preview-wrap{text-align:center;margin:18px auto}
+.preview-wrap{
+    flex: 1.5; /* Takes more space for the preview */
+    text-align:center;
+    margin:18px auto;
+}
 .status-card{
-  width:90%;max-width:var(--card-w);position:relative;margin:0 auto;border-radius:18px;overflow:hidden;
-  border:10px solid rgba(255,215,0,0.95);background:#fff;box-shadow:0 22px 60px rgba(0,0,0,0.18);
-  transform-origin:center center;
+    width:100%;
+    max-width:var(--card-w);position:relative;margin:0 auto;border-radius:18px;overflow:hidden;
+    border:10px solid var(--accent); /* Updated to use accent variable */
+    background:#fff;box-shadow:0 22px 60px rgba(0,0,0,0.18);
+    transform-origin:center center;
 }
 /* decorative corner frames */
 .frame-decor{position:absolute;width:36px;height:36px;border:6px solid var(--accent);background:linear-gradient(45deg,#fff4d6,#ffd77a);opacity:0.95;border-radius:6px}
@@ -88,14 +176,26 @@ body{
 @media (max-width:520px){ .status-bg{height:320px} }
 
 /* overlays (logo + text) */
-.overlay-logo{position:absolute;top:16px;left:16px;width:84px;height:84px;border-radius:50%;border:3px solid #fff;object-fit:cover;box-shadow:0 8px 20px rgba(0,0,0,0.25)}
+.overlay-logo{
+    position:absolute;top:16px;left:16px;width:84px;height:84px;
+    border:3px solid #fff;object-fit:cover;box-shadow:0 8px 20px rgba(0,0,0,0.25);
+    /* Default Shape: Circle */
+    border-radius:50%; 
+}
+
+/* NEW LOGO SHAPE CLASSES */
+.shape-circle { border-radius: 50%; border: 4px solid white; }
+.shape-square { border-radius: 0; border: 4px solid white; }
+.shape-rounded-box { border-radius: 12px; border: 4px solid var(--gold); }
+.shape-star { border-radius: 24px 0 24px 0; border: 4px dashed white; } /* Unique shape */
+
 .overlay-text{position:absolute;left:18px;right:18px;bottom:110px;text-align:center;font-family:"Cinzel",serif;font-size:26px;color:#fff;text-shadow:0 6px 18px rgba(0,0,0,0.6);line-height:1.05;padding:0 8px}
 .overlay-owner{position:absolute;left:18px;bottom:70px;font-size:16px;color:#fff;text-shadow:0 4px 12px rgba(0,0,0,0.5);font-weight:700}
 .overlay-phone{position:absolute;left:18px;bottom:34px;font-size:15px;color:#fff;text-shadow:0 3px 10px rgba(0,0,0,0.45)}
 
 /* qr & payment */
 .qr{width:220px;border-radius:12px;border:6px solid #fff;box-shadow:0 10px 30px rgba(0,0,0,0.12)}
-.payment-note{font-size:13px;color:#5b463a;margin:10px 0}
+.payment-note{font-size:13px;color:#5b4b3a;margin:10px 0}
 
 /* thank you */
 .thankyou{max-width:720px;margin:auto;text-align:center}
@@ -104,10 +204,10 @@ body{
 /* floating diyas container (absolute positioning) */
 #diya-container{position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:5}
 .diya{
-  position:absolute; width:56px;height:56px;opacity:0.9;
-  transform-origin:center;
-  will-change:transform,opacity;
-  filter:drop-shadow(0 8px 12px rgba(0,0,0,0.25));
+    position:absolute; width:56px;height:56px;opacity:0.9;
+    transform-origin:center;
+    will-change:transform,opacity;
+    filter:drop-shadow(0 8px 12px rgba(0,0,0,0.25));
 }
 
 /* small utility */
@@ -117,23 +217,34 @@ body{
 
 /* animations */
 @keyframes floatUp {
-  0%{ transform:translateY(110vh) rotate(0) scale(0.85); opacity:0 }
-  8%{ opacity:1 }
-  100%{ transform:translateY(-30vh) rotate(320deg) scale(1.05); opacity:0 }
+    0%{ transform:translateY(110vh) rotate(0) scale(0.85); opacity:0 }
+    8%{ opacity:1 }
+    100%{ transform:translateY(-30vh) rotate(320deg) scale(1.05); opacity:0 }
 }
 .pulse{animation: pulseAnim 1500ms infinite ease-in-out}
 @keyframes pulseAnim{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
 .zoomIn{animation:zoomIn .9s ease}
-@keyframes zoomIn{from{transform:scale(.98);opacity:.7}to{transform:scale(1);opacity:1}}
+@keyframes zoomIn{from{transform:scale(.98);opacity:.7}to{transform:scale(1);opacity:1)}}
 
 /* responsive */
 @media (max-width:880px){
-  .template-card{width:46%}
+    .template-card{width:46%}
+    .step4-content {
+        flex-direction: column;
+    }
 }
 @media (max-width:520px){
-  .title{font-size:34px}
-  .template-card{width:100%}
-  .status-card{width:92%}
-  .overlay-text{font-size:20px;bottom:90px}
-  .overlay-logo{width:64px;height:64px}
+    .title{font-size:34px}
+    .template-card{width:100%}
+    .status-card{width:92%}
+    .overlay-text{font-size:20px;bottom:90px}
+    .overlay-logo{width:64px;height:64px}
+}
+
+/* Message Box for replacing alert() */
+#customAlert {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%); 
+    background: #ffecb3; color: var(--text); padding: 10px 20px; 
+    border-radius: 8px; border: 2px solid var(--accent); box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+    z-index: 1000; display: none; font-size: 14px;
 }
