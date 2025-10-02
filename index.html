@@ -3,10 +3,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Divine Festive Ad Generator - Upgraded</title>
+    <title>Divine Festive Ad Generator - Premium</title>
 
-    <!-- Google Fonts: Combining existing and new fonts for variety -->
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel:wght@500;700&family=Poppins:wght@300;400;600&family=Bebas+Neue&family=Roboto+Slab:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Including new Bungee and Montserrat for bold options -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel:wght@500;700&family=Poppins:wght@300;400;600&family=Bebas+Neue&family=Roboto+Slab:wght@400;700&family=Inter:wght@400;700&family=Bungee&family=Montserrat:wght@900&display=swap" rel="stylesheet">
     
     <!-- Link to the external CSS file -->
     <link rel="stylesheet" href="css/style.css" />
@@ -18,9 +18,9 @@
     <!-- Message Box for replacing alert() -->
     <div id="customAlert"></div>
 
-    <!-- background devotional music (replaced local asset with a generic one) -->
+    <!-- background devotional music (Reverting to local asset) -->
     <audio id="bgMusic" autoplay loop muted>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg" />
+        <source src="assets/bg-music.mp3" type="audio/mpeg" />
     </audio>
 
     <!-- Floating diya container -->
@@ -28,7 +28,6 @@
 
     <main class="page">
         <header class="masthead">
-            <!-- Used placeholder for logo -->
             <img src="assets/Logo.jpg" alt="Brand Logo" class="logo" />
             <h1 class="title sacred">Divine Dussehra & Diwali Ad Studio</h1>
             <p class="subtitle">Create heavenly, devotional, and shareable festival ads — beautifully crafted for shops & temples.</p>
@@ -38,21 +37,22 @@
 
             <!-- STEP 1: Welcome -->
             <div id="step1" class="step active">
-                <!-- Used placeholder for hero image -->
                 <img src="assets/fireworks.jpg" alt="" class="hero-img" />
                 <button class="btn primary" onclick="nextStep(2)">Step In ✨</button>
             </div>
 
-            <!-- STEP 2: Details -->
+            <!-- STEP 2: Details (Now Optional) -->
             <div id="step2" class="step">
-                <h2 class="section-title">Enter Your Shop Details</h2>
+                <h2 class="section-title">Enter Your Shop Details (Optional)</h2>
+                <p class="subtitle">You can continue without entering details, but they are recommended for branding!</p>
                 <form id="detailsForm" class="form" onsubmit="return false;">
-                    <input id="shopName" type="text" placeholder="Shop Name" required />
-                    <input id="ownerName" type="text" placeholder="Owner / Contact Name" required />
-                    <input id="phone" type="tel" placeholder="Phone (with country code)" required />
+                    <!-- 'required' attributes removed -->
+                    <input id="shopName" type="text" placeholder="Shop Name" />
+                    <input id="ownerName" type="text" placeholder="Owner / Contact Name" />
+                    <input id="phone" type="tel" placeholder="Phone (with country code)" />
                     <label class="file-label">
                         Upload Logo (circle recommended)
-                        <input id="logo" type="file" accept="image/*" required />
+                        <input id="logo" type="file" accept="image/*" />
                     </label>
                     <div class="form-actions">
                         <button class="btn" onclick="saveDetails()">Continue</button>
@@ -64,39 +64,15 @@
             <div id="step3" class="step">
                 <h2 class="section-title">Select a Template</h2>
                 <div class="template-gallery" role="list">
-                    <!-- Replaced local assets with placeholders -->
-                    <button class="template-card" onclick="selectTemplate('assets/happy dasara.jpg')">
-                        <img src="assets/happy dasara.jpg" alt="Dussehra Divine1" />
-                        <div class="template-caption">Dussehra Divine1</div>
-                    </button>
-                    <button class="template-card" onclick="selectTemplate('assets/happy dasara2.jpg')">
-                        <img src="assets/happy dasara2.jpg" alt="Dussehra Divine2" />
-                        <div class="template-caption">Dussehra Divine2</div>
-                    </button>
-                    <button class="template-card" onclick="selectTemplate('assets/happy dasara3.jpg')">
-                        <img src="assets/happy dasara3.jpg" alt="Dussehra Divine3" />
-                        <div class="template-caption">Dussehra Divine3</div>
-                    </button>
-                    <button class="template-card" onclick="selectTemplate('assets/happy dasara4.jpg')">
-                        <img src="assets/happy dasara4.jpg" alt="Dussehra Divine4" />
-                        <div class="template-caption">Dussehra Divine4</div>
-                    </button>
-                    <button class="template-card" onclick="selectTemplate('assets/happy dasara5.jpg')">
-                        <img src="assets/happy dasara5.jpg" alt="Dussehra Divine5" />
-                        <div class="template-caption">Dussehra Divine5</div>
-                    </button>
-                    <button class="template-card" onclick="selectTemplate('assets/Durga Maa.jpg')">
-                        <img src="assets/Durga Maa.jpg" alt="Durga Blessings" />
-                        <div class="template-caption">Durga Maa Blessings1</div>
-                    </button>
-                    <button class="template-card" onclick="selectTemplate('assets/pexels-souvik-laha-3637528-10852670.jpg')">
-                        <img src="assets/pexels-souvik-laha-3637528-10852670.jpg" alt="Durga Maa Blessings2" />
-                        <div class="template-caption">Durga Maa Blessings2</div>
-                    </button>
-                    <button class="template-card" onclick="selectTemplate('assets/happy diwali1.jpg')">
-                        <img src="assets/happy diwali1.jpg" alt="Diwali Sparkle" />
-                        <div class="template-caption">Diwali Sparkle</div>
-                    </button>
+                    <!-- Assets paths reverted to local -->
+                    <button class="template-card" onclick="selectTemplate('assets/happy dasara.jpg')"><img src="assets/happy dasara.jpg" alt="Dussehra Divine1" /><div class="template-caption">Dussehra Divine1</div></button>
+                    <button class="template-card" onclick="selectTemplate('assets/happy dasara2.jpg')"><img src="assets/happy dasara2.jpg" alt="Dussehra Divine2" /><div class="template-caption">Dussehra Divine2</div></button>
+                    <button class="template-card" onclick="selectTemplate('assets/happy dasara3.jpg')"><img src="assets/happy dasara3.jpg" alt="Dussehra Divine3" /><div class="template-caption">Dussehra Divine3</div></button>
+                    <button class="template-card" onclick="selectTemplate('assets/happy dasara4.jpg')"><img src="assets/happy dasara4.jpg" alt="Dussehra Divine4" /><div class="template-caption">Dussehra Divine4</div></button>
+                    <button class="template-card" onclick="selectTemplate('assets/happy dasara5.jpg')"><img src="assets/happy dasara5.jpg" alt="Dussehra Divine5" /><div class="template-caption">Dussehra Divine5</div></button>
+                    <button class="template-card" onclick="selectTemplate('assets/Durga Maa.jpg')"><img src="assets/Durga Maa.jpg" alt="Durga Blessings" /><div class="template-caption">Durga Maa Blessings1</div></button>
+                    <button class="template-card" onclick="selectTemplate('assets/pexels-souvik-laha-3637528-10852670.jpg')"><img src="assets/pexels-souvik-laha-3637528-10852670.jpg" alt="Durga Maa Blessings2" /><div class="template-caption">Durga Maa Blessings2</div></button>
+                    <button class="template-card" onclick="selectTemplate('assets/happy diwali1.jpg')"><img src="assets/happy diwali1.jpg" alt="Diwali Sparkle" /><div class="template-caption">Diwali Sparkle</div></button>
                 </div>
             </div>
 
@@ -110,12 +86,17 @@
                     <div class="preview-wrap">
                         <div id="statusArea" class="status-card">
                             <img id="statusBg" class="status-bg" src="" alt="Template background" />
-                            <!-- Initial logo shape class applied -->
                             <img id="overlayLogo" class="overlay-logo shape-circle" src="" alt="Logo" />
-                            <!-- Initial font class applied -->
-                            <div id="overlayText" class="overlay-text font-cinzel"></div>
-                            <div id="overlayOwner" class="overlay-owner font-poppins"></div>
-                            <div id="overlayPhone" class="overlay-phone font-poppins"></div>
+                            
+                            <!-- New container for text positioning -->
+                            <div id="overlayTextContainer" class="overlay-text-container pos-bottom-center">
+                                <!-- Added contenteditable="true" for live text editing -->
+                                <div id="overlayText" class="overlay-text font-cinzel" contenteditable="true"></div>
+                                <div id="overlayOwner" class="overlay-owner font-poppins" contenteditable="true"></div>
+                                <div id="overlayPhone" class="overlay-phone font-poppins" contenteditable="true"></div>
+                            </div>
+                            
+                            <!-- Frame Decor elements -->
                             <div class="frame-decor top-left"></div>
                             <div class="frame-decor top-right"></div>
                             <div class="frame-decor bottom-left"></div>
@@ -123,13 +104,21 @@
                         </div>
                     </div>
                     
-                    <!-- Customization Panel (NEW) -->
+                    <!-- Customization Panel -->
                     <div class="customization-panel">
                         <h3 class="section-title" style="margin-top:0;">Live Editor Controls</h3>
 
+                        <!-- Color Presets -->
+                        <div class="controls-group">
+                            <label class="control-label">Aesthetic Color Presets</label>
+                            <div id="colorPresets" class="grid-options">
+                                <!-- Color preset buttons generated by JS -->
+                            </div>
+                        </div>
+
                         <!-- 1. Text Color Control -->
                         <div class="controls-group">
-                            <label class="control-label">Text Color</label>
+                            <label class="control-label">Fine Tune Text Color</label>
                             <div class="color-input-wrap">
                                 <input type="color" id="textColorInput" value="#FFFFFF" oninput="updateColor('text', this.value)">
                             </div>
@@ -137,27 +126,43 @@
 
                         <!-- 2. Frame/Accent Color Control -->
                         <div class="controls-group">
-                            <label class="control-label">Accent Color (Frame/Deco)</label>
+                            <label class="control-label">Fine Tune Accent Color (Glitter Frame)</label>
                             <div class="color-input-wrap">
-                                <input type="color" id="accentColorInput" value="#C27A00" oninput="updateColor('accent', this.value)">
+                                <input type="color" id="accentColorInput" value="#D4AF37" oninput="updateColor('accent', this.value)">
                             </div>
                         </div>
 
                         <!-- 3. Font Family Control -->
                         <div class="controls-group">
                             <label class="control-label">Font Style</label>
-                            <div id="fontControls" class="grid-options">
+                            <div id="fontControls" class="grid-options" style="grid-template-columns: repeat(3, 1fr);">
                                 <!-- Font buttons generated by JS -->
                             </div>
                         </div>
 
-                        <!-- 4. Logo Shape Control -->
+                        <!-- 4. Font Size Control (NEW) -->
+                        <div class="controls-group">
+                            <label class="control-label">Shop Name Font Size</label>
+                            <input type="range" id="fontSizeSlider" min="16" max="48" value="28" oninput="updateSize(this.value)">
+                            <small>Current Size: <span id="currentFontSize">28</span>px</small>
+                        </div>
+
+                        <!-- 5. Text Position Control (NEW) -->
+                        <div class="controls-group">
+                            <label class="control-label">Text Position</label>
+                            <div id="positionControls" class="grid-options" style="grid-template-columns: repeat(3, 1fr);">
+                                <!-- Position buttons generated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- 6. Logo Shape Control -->
                         <div class="controls-group">
                             <label class="control-label">Logo Shape</label>
                             <div id="shapeControls" class="grid-options">
                                 <!-- Shape buttons generated by JS -->
                             </div>
                         </div>
+                        
                     </div>
                 </div>
 
@@ -170,10 +175,9 @@
             <!-- STEP 5: Payment -->
             <div id="step5" class="step">
                 <h2 class="section-title">Unlock HD Export — Pay ₹19 only</h2>
-                <!-- Used placeholder for QR -->
                 <img src="assets/upi-qr.png" alt="UPI QR" class="qr" />
                 <p class="payment-note">Scan QR with your UPI app (Google Pay / PhonePe / Paytm / BHIM). If you see "bank limit exceeded" or no bank name, please try above UPI QR or use the UPI ID in your app.</p>
-                <p class="payment-instruction">UPI ID: <strong>bojjasrikumar0806-1@oksbi</strong> — Pay ₹19 INR (IM a student, just trying this to cover my financial issues 🙏,you can gift me more money if you like my work :-) .....)</p>
+                <p class="payment-instruction">UPI ID: <strong>bojjasrikumar0806-1@oksbi</strong> — Pay ₹19 INR (I'm a student, just trying this to cover my financial issues 🙏,you can gift me more money if you like my work :-) .....)</p>
                 <a class="btn primary" href="upi://pay?pa=bojjasrikumar0806-1@oksbi&pn=Srikumar+Bojja&am=19&cu=INR" target="_blank" rel="noopener">Open UPI App</a>
                 <div class="form-actions">
                     <button class="btn" onclick="nextStep(6)">I Have Paid</button>app
@@ -183,13 +187,11 @@
             <!-- STEP 6: Thank you -->
             <div id="step6" class="step">
                 <div class="thankyou">
-                    <!-- Used placeholder for Harathi -->
                     <img src="assets/Harathi.jpg" alt="Harathi" class="harathi" />
                     <h2 class="section-title">Thank You — Happy Festivals!</h2>
                     <p class="blessing">May Goddess bless your shop with prosperity & joy.</p>
                     <audio controls>
-                        <!-- Used placeholder audio -->
-                        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg" />
+                        <source src="assets/devotional-song.mp3" type="audio/mpeg" />
                     </audio>
                 </div>
             </div>
@@ -201,5 +203,3 @@
     <script src="js/script.js"></script>
 </body>
 </html>
-
-
