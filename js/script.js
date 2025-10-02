@@ -67,9 +67,10 @@ function nextStep(step){
     const newStep = document.getElementById('step' + currentStep);
     if (newStep) newStep.classList.add('active');
 
-    // Initialize controls if moving to Step 4
+    // *** FIX LOCATION: Initialize controls FIRST, then apply styles ***
     if (step === 4) {
-        initializeControls();
+        initializeControls(); // 1. Builds all the buttons/inputs
+        applyInitialStylesToPreview(); // 2. Reads the input values and applies styles
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -107,10 +108,10 @@ function selectTemplate(imgSrc){
         selectedTemplate = imgSrc;
         
         const bg = document.getElementById('statusBg');
-        const logo = document.getElementById('overlayLogo');
         const text = document.getElementById('overlayText');
         const ownerEl = document.getElementById('overlayOwner');
         const phoneEl = document.getElementById('overlayPhone');
+        const logo = document.getElementById('overlayLogo');
 
         bg.src = imgSrc;
         
@@ -126,25 +127,7 @@ function selectTemplate(imgSrc){
         } else {
             logo.style.display = 'none';
         }
-
-        // Apply current styles
-        applyFontClasses(currentFontClass);
-        applyShapeClasses(currentShapeClass);
-        applyPositionClass(currentPositionClass);
-        
-        // --- FIX START: DEFENSIVELY READ COLOR INPUTS ---
-        // Accessing .value on a null element crashes. We must check for existence first.
-        const textColorInput = document.getElementById('textColorInput');
-        const accentColorInput = document.getElementById('accentColorInput');
-
-        // Use element value if available, otherwise use a safe default
-        const textColor = textColorInput ? textColorInput.value : '#FFFFFF';
-        const accentColor = accentColorInput ? accentColorInput.value : '#D4AF37'; // Default gold
-        
-        document.getElementById('overlayText').style.fontSize = currentFontSize + 'px';
-        updateColor('text', textColor);
-        updateColor('accent', accentColor);
-        // --- FIX END ---
+        // NOTE: All styling is moved to applyInitialStylesToPreview()
         
         // little visual pop
         const card = document.querySelector('.status-card');
@@ -155,7 +138,7 @@ function selectTemplate(imgSrc){
         nextStep(4);
     } catch (e) {
         console.error("Error during template selection:", e);
-        // Using a more generic message here as the console will show the full error
+        // This defensive message remains to catch any residual issues
         showMessage("An error occurred preparing the preview. Check the console for details.");
     }
 }
@@ -217,71 +200,91 @@ window.addEventListener('load', ()=>{
 
 // --- NEW CUSTOMIZATION FUNCTIONS ---
 
+/* New function to apply all current styles/content AFTER elements are built */
+function applyInitialStylesToPreview() {
+    try {
+        // 1. Apply size, font, and position classes
+        applyFontClasses(currentFontClass);
+        applyShapeClasses(currentShapeClass);
+        applyPositionClass(currentPositionClass);
+        
+        // 2. Apply size (manual call)
+        document.getElementById('overlayText').style.fontSize = currentFontSize + 'px';
+        
+        // 3. Apply colors based on control panel values (now guaranteed to exist)
+        const textColor = document.getElementById('textColorInput').value;
+        const accentColor = document.getElementById('accentColorInput').value;
+        
+        updateColor('text', textColor);
+        updateColor('accent', accentColor);
+        
+        // 4. Update the slider display to match currentFontSize
+        document.getElementById('currentFontSize').textContent = currentFontSize;
+        document.getElementById('fontSizeSlider').value = currentFontSize;
+        
+    } catch (e) {
+        console.warn("Could not apply initial styles, checking element readiness:", e);
+    }
+}
+
+
 function initializeControls() {
+    // We check if the controls have already been initialized to avoid duplicates
+    if (document.getElementById('fontControls').children.length > 0) return;
+    
     // 1. Initialize Color Preset Buttons
     const colorPresets = document.getElementById('colorPresets');
-    if (colorPresets.children.length === 0) {
-        COLOR_PRESETS.forEach(option => {
-            const button = document.createElement('button');
-            button.textContent = option.name;
-            button.className = 'option-button';
-            button.style.backgroundColor = option.accent;
-            button.style.color = option.text === '#FFFFFF' ? '#2B2B2B' : option.text;
-            button.onclick = () => applyPreset(option);
-            colorPresets.appendChild(button);
-        });
-    }
+    COLOR_PRESETS.forEach(option => {
+        const button = document.createElement('button');
+        button.textContent = option.name;
+        button.className = 'option-button';
+        button.style.backgroundColor = option.accent;
+        button.style.color = option.text === '#FFFFFF' ? '#2B2B2B' : option.text;
+        button.onclick = () => applyPreset(option);
+        colorPresets.appendChild(button);
+    });
 
     // 2. Initialize Font Buttons
     const fontControls = document.getElementById('fontControls');
-    if (fontControls.children.length === 0) {
-        FONT_OPTIONS.forEach(option => {
-            const button = document.createElement('button');
-            button.textContent = option.name.split(' ')[0]; 
-            button.className = 'option-button ' + option.class;
-            if (option.class === currentFontClass) {
-                button.classList.add('active');
-            }
-            button.onclick = () => updateFont(option.class, button);
-            fontControls.appendChild(button);
-        });
-    }
+    FONT_OPTIONS.forEach(option => {
+        const button = document.createElement('button');
+        button.textContent = option.name.split(' ')[0]; 
+        button.className = 'option-button ' + option.class;
+        if (option.class === currentFontClass) {
+            button.classList.add('active');
+        }
+        button.onclick = () => updateFont(option.class, button);
+        fontControls.appendChild(button);
+    });
 
     // 3. Initialize Position Buttons
     const positionControls = document.getElementById('positionControls');
-    if (positionControls.children.length === 0) {
-        POSITION_OPTIONS.forEach(option => {
-            const button = document.createElement('button');
-            button.textContent = option.name;
-            button.className = 'option-button';
-            if (option.class === currentPositionClass) {
-                button.classList.add('active');
-            }
-            button.onclick = () => updatePosition(option.class, button);
-            positionControls.appendChild(button);
-        });
-    }
+    POSITION_OPTIONS.forEach(option => {
+        const button = document.createElement('button');
+        button.textContent = option.name;
+        button.className = 'option-button';
+        if (option.class === currentPositionClass) {
+            button.classList.add('active');
+        }
+        button.onclick = () => updatePosition(option.class, button);
+        positionControls.appendChild(button);
+    });
 
 
     // 4. Initialize Shape Buttons
     const shapeControls = document.getElementById('shapeControls');
-    if (shapeControls.children.length === 0) {
-        SHAPE_OPTIONS.forEach(option => {
-            const button = document.createElement('button');
-            button.textContent = option.name;
-            button.className = 'option-button';
-            if (option.class === currentShapeClass) {
-                button.classList.add('active');
-            }
-            button.onclick = () => updateShape(option.class, button);
-            shapeControls.appendChild(button);
-        });
-    }
+    SHAPE_OPTIONS.forEach(option => {
+        const button = document.createElement('button');
+        button.textContent = option.name;
+        button.className = 'option-button';
+        if (option.class === currentShapeClass) {
+            button.classList.add('active');
+        }
+        button.onclick = () => updateShape(option.class, button);
+        shapeControls.appendChild(button);
+    });
     
-    // Set initial size display
-    document.getElementById('currentFontSize').textContent = currentFontSize;
-    document.getElementById('fontSizeSlider').value = currentFontSize;
-    document.getElementById('overlayText').style.fontSize = currentFontSize + 'px';
+    // Set initial size display (Done in applyInitialStylesToPreview)
 }
 
 function applyPreset(preset) {
