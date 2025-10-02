@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Divine Festive Ad Generator</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- background devotional music (muted autoplay, unmute on first click due to browser policy) -->
+  <audio id="bgMusic" autoplay loop muted>
+    <source src="assets/bg-music.mp3" type="audio/mpeg" />
+  </audio>
+
+  <!-- Floating diya container (JS will populate) -->
+  <div id="diya-container" aria-hidden="true"></div>
+
+  <main class="page">
+    <header class="masthead">
+      <img src="assets/Logo.jpg" alt="Brand Logo" class="logo" />
+      <h1 class="title sacred">Divine Dussehra & Diwali Ad Studio</h1>
+      <p class="subtitle">Create heavenly, devotional, and shareable festival ads — beautifully crafted for shops & temples.</p>
+    </header>
+
+    <section id="steps" class="steps">
+
+      <!-- STEP 1: Welcome -->
+      <div id="step1" class="step active">
+        <img src="assets/fireworks.jpg" alt="" class="hero-img" />
+        <button class="btn primary" onclick="nextStep(2)">Step In ✨</button>
+      </div>
+
+      <!-- STEP 2: Details -->
+      <div id="step2" class="step">
+        <h2 class="section-title">Enter Your Shop Details</h2>
+        <form id="detailsForm" class="form" onsubmit="return false;">
+          <input id="shopName" type="text" placeholder="Shop Name" required />
+          <input id="ownerName" type="text" placeholder="Owner / Contact Name" required />
+          <input id="phone" type="tel" placeholder="Phone (with country code)" required />
+          <label class="file-label">
+            Upload Logo (circle recommended)
+            <input id="logo" type="file" accept="image/*" required />
+          </label>
+          <div class="form-actions">
+            <button class="btn" onclick="saveDetails()">Continue</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- STEP 3: Templates -->
+      <div id="step3" class="step">
+        <h2 class="section-title">Select a Template</h2>
+        <div class="template-gallery" role="list">
+          <button class="template-card" onclick="selectTemplate('assets/pexels-souvik-laha-3637528-10852670.jpg')">
+            <img src="assets/pexels-souvik-laha-3637528-10852670.jpg" alt="Dussehra Divine" />
+            <div class="template-caption">Dussehra Divine</div>
+          </button>
+          <button class="template-card" onclick="selectTemplate('assets/Durga Maa.jpg')">
+            <img src="assets/Durga Maa.jpg" alt="Durga Blessings" />
+            <div class="template-caption">Durga Blessings</div>
+          </button>
+          <button class="template-card" onclick="selectTemplate('assets/diwali.jpg')">
+            <img src="assets/diwali.jpg" alt="Diwali Sparkle" />
+            <div class="template-caption">Diwali Sparkle</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 4: Customize & Preview -->
+      <div id="step4" class="step">
+        <h2 class="section-title">Customize & Preview</h2>
+
+        <!-- preview card with gold frame -->
+        <div class="preview-wrap">
+          <div id="statusArea" class="status-card">
+            <img id="statusBg" class="status-bg" src="" alt="Template background" />
+            <img id="overlayLogo" class="overlay-logo" src="" alt="Logo" />
+            <div id="overlayText" class="overlay-text"></div>
+            <div id="overlayOwner" class="overlay-owner"></div>
+            <div id="overlayPhone" class="overlay-phone"></div>
+            <div class="frame-decor top-left"></div>
+            <div class="frame-decor top-right"></div>
+            <div class="frame-decor bottom-left"></div>
+            <div class="frame-decor bottom-right"></div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="btn secondary" onclick="downloadStatus()">Download PNG</button>
+          <button class="btn" onclick="nextStep(5)">Continue</button>
+        </div>
+      </div>
+
+      <!-- STEP 5: Payment -->
+      <div id="step5" class="step">
+        <h2 class="section-title">Unlock HD Export — Pay ₹49</h2>
+        <img src="assets/upi-qr.png" alt="UPI QR" class="qr" />
+        <p class="payment-note">Scan QR with your UPI app (Google Pay / PhonePe / Paytm / BHIM). If you see "bank limit exceeded" or no bank name, please try above UPI QR or use the UPI ID in your app.</p>
+        <p class="payment-instruction">UPI ID: <strong>bojjasrikumar0806-1@oksbi</strong> — Pay ₹19 INR (IM a student, just trying this to cover my financial issues 🙏,you can help me if you can afford more.....)</p>
+        <a class="btn primary" href="upi://pay?pa=bojjasrikumar0806-1@oksbi&pn=Srikumar+Bojja&am=19&cu=INR" target="_blank" rel="noopener">Open UPI App</a>
+        <div class="form-actions">
+          <button class="btn" onclick="nextStep(6)">I Have Paid</button>app
+        </div>
+      </div>
+
+      <!-- STEP 6: Thank you -->
+      <div id="step6" class="step">
+        <div class="thankyou">
+          <img src="assets/Harathi.jpg" alt="Harathi" class="harathi" />
+          <h2 class="section-title">Thank You — Happy Festivals!</h2>
+          <p class="blessing">May Goddess bless your shop with prosperity & joy.</p>
+          <audio controls>
+            <source src="assets/devotional-song.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- html2canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <!-- Main JS -->
+  <script src="js/script.js"></script>
+</body>
+</html>
