@@ -1,132 +1,694 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Divine Festive Ad Generator</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Divine Festive Ad Generator - Upgraded</title>
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Combining existing and new fonts for variety -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel:wght@500;700&family=Poppins:wght@300;400;600&family=Bebas+Neue&family=Roboto+Slab:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-  <!-- Main CSS -->
-  <link rel="stylesheet" href="css/style.css" />
+    <style>
+        /* ====== base / fonts / colors ====== */
+        :root{
+            --bg1: #fff7ed;
+            --accent: #c27a00; /* Default Accent */
+            --gold: #ffd64d;
+            --maroon: #9b1c1c;
+            --soft: #f6e7d2;
+            --text: #2b2b2b;
+            --card-w: 360px;
+        }
+
+        /* NEW FONT CLASSES */
+        .font-great-vibes { font-family: 'Great Vibes', cursive; }
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .font-bebas-neue { font-family: 'Bebas Neue', sans-serif; }
+        .font-roboto-slab { font-family: 'Roboto Slab', serif; }
+        .font-inter { font-family: 'Inter', sans-serif; }
+        
+        /* reset & layout */
+        *{box-sizing:border-box}
+        html,body{height:100%;margin:0}
+        body{
+            font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: linear-gradient(180deg,var(--bg1),#fff1e6);
+            color:var(--text);
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+            padding:18px 14px;
+        }
+
+        /* page container */
+        .page{max-width:1200px;margin:0 auto} /* Increased max-width to accommodate controls in step 4 */
+        .masthead{text-align:center;margin-bottom:14px}
+        .logo{width:110px;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,0.12)}
+        .title{
+            font-family:"Great Vibes", serif;
+            font-size:48px;
+            color:var(--maroon);
+            margin:8px 0 4px;
+            text-shadow:0 3px 0 rgba(0,0,0,0.05);
+        }
+        .subtitle{color:#6b4b2a;font-size:15px;margin-bottom:8px}
+
+        /* steps */
+        .steps{background:transparent}
+        .step{display:none;padding:18px 0}
+        .step.active{display:block;animation:fadeIn 420ms ease}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+        /* hero image */
+        .hero-img{width:100%;max-width:760px;border-radius:16px;border:6px double #ffeb99;box-shadow:0 18px 40px rgba(0,0,0,0.12)}
+
+        /* buttons */
+        .btn{
+            display:inline-block;padding:12px 22px;border-radius:999px;border:none;background:linear-gradient(90deg,var(--accent),#f59e0b);color:white;font-weight:600;
+            box-shadow:0 8px 30px rgba(197,122,0,0.18);
+            cursor:pointer;font-size:16px;margin:8px 6px;transition:transform .18s ease,box-shadow .18s ease;
+        }
+        .btn:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(197,122,0,0.26)}
+        .btn.primary{background:linear-gradient(90deg,#d97706,#f59e0b)}
+        .btn.secondary{background:linear-gradient(90deg,#ffffff,#ffe59a);color:var(--accent);border:2px solid var(--accent)}
+
+        /* forms */
+        .form{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+        .form input[type="text"], .form input[type="tel"], .form textarea{ /* Added textarea */
+            padding:12px;border-radius:10px;border:2px solid rgba(155,28,28,0.08);font-size:16px;width:100%;
+            background:white;box-shadow:inset 0 3px 8px rgba(0,0,0,0.03);
+        }
+        .file-label{display:block;padding:10px;border-radius:10px;background:#fff;margin:6px auto;border:2px dashed rgba(0,0,0,0.06);text-align:center;font-size:14px;cursor:pointer}
+        .file-label input{display:none}
+        .form-actions{text-align:center;margin-top:8px}
+
+        /* template gallery */
+        .template-gallery{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+        .template-card{width:220px;border-radius:12px;overflow:hidden;border:4px solid var(--gold);background:#fff;cursor:pointer;box-shadow:0 14px 28px rgba(0,0,0,0.1);padding-bottom:6px;transition:transform .2s ease}
+        .template-card img{width:100%;height:160px;object-fit:cover;display:block}
+        .template-caption{padding:8px;font-weight:700;color:var(--maroon);font-family:"Cinzel",serif;text-align:center;background:linear-gradient(90deg,#fff6e0,#ffe99b)}
+
+        /* STEP 4 LAYOUT (NEW) */
+        .step4-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        @media (min-width: 900px) {
+            .step4-content {
+                flex-direction: row;
+            }
+        }
+
+        /* Customization Panel Styling */
+        .customization-panel {
+            flex: 1;
+            padding: 18px;
+            background: var(--soft);
+            border-radius: 12px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .controls-group {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .control-label {
+            display: block;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            color: var(--maroon);
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .grid-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .option-button {
+            padding: 8px;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            background: white;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .option-button:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+        .option-button.active {
+            background: var(--maroon);
+            color: white;
+            border-color: var(--gold);
+            box-shadow: 0 4px 10px rgba(155,28,28,0.4);
+        }
+
+        /* Color Inputs */
+        .color-input-wrap input[type="color"] {
+            width: 100%;
+            height: 38px;
+            padding: 2px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        /* status preview card */
+        .preview-wrap{
+            flex: 1.5; /* Takes more space for the preview */
+            text-align:center;
+            margin:18px auto;
+        }
+        .status-card{
+            width:100%;
+            max-width:var(--card-w);position:relative;margin:0 auto;border-radius:18px;overflow:hidden;
+            border:10px solid var(--accent); /* Updated to use accent variable */
+            background:#fff;box-shadow:0 22px 60px rgba(0,0,0,0.18);
+            transform-origin:center center;
+        }
+        /* decorative corner frames */
+        .frame-decor{position:absolute;width:36px;height:36px;border:6px solid var(--accent);background:linear-gradient(45deg,#fff4d6,#ffd77a);opacity:0.95;border-radius:6px}
+        .frame-decor.top-left{left:-10px;top:-10px;transform:rotate(-12deg)}
+        .frame-decor.top-right{right:-10px;top:-10px;transform:rotate(12deg)}
+        .frame-decor.bottom-left{left:-10px;bottom:-10px;transform:rotate(12deg)}
+        .frame-decor.bottom-right{right:-10px;bottom:-10px;transform:rotate(-12deg)}
+
+        /* background image inside card */
+        .status-bg{width:100%;height:420px;object-fit:cover;display:block}
+        @media (max-width:520px){ .status-bg{height:320px} }
+
+        /* overlays (logo + text) */
+        .overlay-logo{
+            position:absolute;top:16px;left:16px;width:84px;height:84px;
+            border:3px solid #fff;object-fit:cover;box-shadow:0 8px 20px rgba(0,0,0,0.25);
+            /* Default Shape: Circle */
+            border-radius:50%; 
+        }
+
+        /* NEW LOGO SHAPE CLASSES */
+        .shape-circle { border-radius: 50%; border: 4px solid white; }
+        .shape-square { border-radius: 0; border: 4px solid white; }
+        .shape-rounded-box { border-radius: 12px; border: 4px solid var(--gold); }
+        .shape-star { border-radius: 24px 0 24px 0; border: 4px dashed white; } /* Unique shape */
+
+        .overlay-text{position:absolute;left:18px;right:18px;bottom:110px;text-align:center;font-family:"Cinzel",serif;font-size:26px;color:#fff;text-shadow:0 6px 18px rgba(0,0,0,0.6);line-height:1.05;padding:0 8px}
+        .overlay-owner{position:absolute;left:18px;bottom:70px;font-size:16px;color:#fff;text-shadow:0 4px 12px rgba(0,0,0,0.5);font-weight:700}
+        .overlay-phone{position:absolute;left:18px;bottom:34px;font-size:15px;color:#fff;text-shadow:0 3px 10px rgba(0,0,0,0.45)}
+
+        /* qr & payment */
+        .qr{width:220px;border-radius:12px;border:6px solid #fff;box-shadow:0 10px 30px rgba(0,0,0,0.12)}
+        .payment-note{font-size:13px;color:#5b4b3a;margin:10px 0}
+
+        /* thank you */
+        .thankyou{max-width:720px;margin:auto;text-align:center}
+        .harathi{width:220px;border-radius:12px;border:6px solid var(--gold);box-shadow:0 18px 40px rgba(0,0,0,0.12)}
+
+        /* floating diyas container (absolute positioning) */
+        #diya-container{position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:5}
+        .diya{
+            position:absolute; width:56px;height:56px;opacity:0.9;
+            transform-origin:center;
+            will-change:transform,opacity;
+            filter:drop-shadow(0 8px 12px rgba(0,0,0,0.25));
+        }
+
+        /* small utility */
+        .controls{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:12px 0}
+        .section-title{font-family:"Cinzel",serif;color:var(--maroon);font-size:22px;margin:10px 0}
+        .blessing{font-family:"Great Vibes",cursive;color:#7a3b2b;font-size:18px}
+
+        /* animations */
+        @keyframes floatUp {
+            0%{ transform:translateY(110vh) rotate(0) scale(0.85); opacity:0 }
+            8%{ opacity:1 }
+            100%{ transform:translateY(-30vh) rotate(320deg) scale(1.05); opacity:0 }
+        }
+        .pulse{animation: pulseAnim 1500ms infinite ease-in-out}
+        @keyframes pulseAnim{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+        .zoomIn{animation:zoomIn .9s ease}
+        @keyframes zoomIn{from{transform:scale(.98);opacity:.7}to{transform:scale(1);opacity:1}}
+
+        /* responsive */
+        @media (max-width:880px){
+            .template-card{width:46%}
+            .step4-content {
+                flex-direction: column;
+            }
+        }
+        @media (max-width:520px){
+            .title{font-size:34px}
+            .template-card{width:100%}
+            .status-card{width:92%}
+            .overlay-text{font-size:20px;bottom:90px}
+            .overlay-logo{width:64px;height:64px}
+        }
+
+        /* Message Box for replacing alert() */
+        #customAlert {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%); 
+            background: #ffecb3; color: var(--text); padding: 10px 20px; 
+            border-radius: 8px; border: 2px solid var(--accent); box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+            z-index: 1000; display: none; font-size: 14px;
+        }
+    </style>
 </head>
 <body>
-  <!-- background devotional music (muted autoplay, unmute on first click due to browser policy) -->
-  <audio id="bgMusic" autoplay loop muted>
-    <source src="assets/bg-music.mp3" type="audio/mpeg" />
-  </audio>
+    <!-- Message Box for replacing alert() -->
+    <div id="customAlert"></div>
 
-  <!-- Floating diya container (JS will populate) -->
-  <div id="diya-container" aria-hidden="true"></div>
+    <!-- background devotional music (replaced local asset with a generic one) -->
+    <audio id="bgMusic" autoplay loop muted>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg" />
+    </audio>
 
-  <main class="page">
-    <header class="masthead">
-      <img src="assets/Logo.jpg" alt="Brand Logo" class="logo" />
-      <h1 class="title sacred">Divine Dussehra & Diwali Ad Studio</h1>
-      <p class="subtitle">Create heavenly, devotional, and shareable festival ads — beautifully crafted for shops & temples.</p>
-    </header>
+    <!-- Floating diya container -->
+    <div id="diya-container" aria-hidden="true"></div>
 
-    <section id="steps" class="steps">
+    <main class="page">
+        <header class="masthead">
+            <!-- Used placeholder for logo -->
+            <img src="https://placehold.co/110x110/ffd64d/9b1c1c?text=SK+Logo" alt="Brand Logo" class="logo" />
+            <h1 class="title sacred">Divine Dussehra & Diwali Ad Studio</h1>
+            <p class="subtitle">Create heavenly, devotional, and shareable festival ads — beautifully crafted for shops & temples.</p>
+        </header>
 
-      <!-- STEP 1: Welcome -->
-      <div id="step1" class="step active">
-        <img src="assets/fireworks.jpg" alt="" class="hero-img" />
-        <button class="btn primary" onclick="nextStep(2)">Step In ✨</button>
-      </div>
+        <section id="steps" class="steps">
 
-      <!-- STEP 2: Details -->
-      <div id="step2" class="step">
-        <h2 class="section-title">Enter Your Shop Details</h2>
-        <form id="detailsForm" class="form" onsubmit="return false;">
-          <input id="shopName" type="text" placeholder="Shop Name" required />
-          <input id="ownerName" type="text" placeholder="Owner / Contact Name" required />
-          <input id="phone" type="tel" placeholder="Phone (with country code)" required />
-          <label class="file-label">
-            Upload Logo (circle recommended)
-            <input id="logo" type="file" accept="image/*" required />
-          </label>
-          <div class="form-actions">
-            <button class="btn" onclick="saveDetails()">Continue</button>
-          </div>
-        </form>
-      </div>
+            <!-- STEP 1: Welcome -->
+            <div id="step1" class="step active">
+                <!-- Used placeholder for hero image -->
+                <img src="https://placehold.co/760x400/9b1c1c/ffd64d?text=Festive+Celebration+Image" alt="" class="hero-img" />
+                <button class="btn primary" onclick="nextStep(2)">Step In ✨</button>
+            </div>
 
-      <!-- STEP 3: Templates -->
-      <div id="step3" class="step">
-        <h2 class="section-title">Select a Template</h2>
-        <div class="template-gallery" role="list">
-          <button class="template-card" onclick="selectTemplate('assets/pexels-souvik-laha-3637528-10852670.jpg')">
-            <img src="assets/pexels-souvik-laha-3637528-10852670.jpg" alt="Dussehra Divine" />
-            <div class="template-caption">Dussehra Divine</div>
-          </button>
-          <button class="template-card" onclick="selectTemplate('assets/Durga Maa.jpg')">
-            <img src="assets/Durga Maa.jpg" alt="Durga Blessings" />
-            <div class="template-caption">Durga Blessings</div>
-          </button>
-          <button class="template-card" onclick="selectTemplate('assets/diwali.jpg')">
-            <img src="assets/diwali.jpg" alt="Diwali Sparkle" />
-            <div class="template-caption">Diwali Sparkle</div>
-          </button>
-        </div>
-      </div>
+            <!-- STEP 2: Details -->
+            <div id="step2" class="step">
+                <h2 class="section-title">Enter Your Shop Details</h2>
+                <form id="detailsForm" class="form" onsubmit="return false;">
+                    <input id="shopName" type="text" placeholder="Shop Name" required />
+                    <input id="ownerName" type="text" placeholder="Owner / Contact Name" required />
+                    <input id="phone" type="tel" placeholder="Phone (with country code)" required />
+                    <label class="file-label">
+                        Upload Logo (circle recommended)
+                        <input id="logo" type="file" accept="image/*" required />
+                    </label>
+                    <div class="form-actions">
+                        <button class="btn" onclick="saveDetails()">Continue</button>
+                    </div>
+                </form>
+            </div>
 
-      <!-- STEP 4: Customize & Preview -->
-      <div id="step4" class="step">
-        <h2 class="section-title">Customize & Preview</h2>
+            <!-- STEP 3: Templates -->
+            <div id="step3" class="step">
+                <h2 class="section-title">Select a Template</h2>
+                <div class="template-gallery" role="list">
+                    <!-- Replaced local assets with placeholders -->
+                    <button class="template-card" onclick="selectTemplate('https://placehold.co/220x160/9b1c1c/ffe59a?text=Dussehra+Divine')">
+                        <img src="https://placehold.co/220x160/9b1c1c/ffe59a?text=Dussehra+Divine" alt="Dussehra Divine" />
+                        <div class="template-caption">Dussehra Divine</div>
+                    </button>
+                    <button class="template-card" onclick="selectTemplate('https://placehold.co/220x160/c27a00/fff7ed?text=Durga+Blessings')">
+                        <img src="https://placehold.co/220x160/c27a00/fff7ed?text=Durga+Blessings" alt="Durga Blessings" />
+                        <div class="template-caption">Durga Blessings</div>
+                    </button>
+                    <button class="template-card" onclick="selectTemplate('https://placehold.co/220x160/d97706/fff?text=Diwali+Sparkle')">
+                        <img src="https://placehold.co/220x160/d97706/fff?text=Diwali+Sparkle" alt="Diwali Sparkle" />
+                        <div class="template-caption">Diwali Sparkle</div>
+                    </button>
+                </div>
+            </div>
 
-        <!-- preview card with gold frame -->
-        <div class="preview-wrap">
-          <div id="statusArea" class="status-card">
-            <img id="statusBg" class="status-bg" src="" alt="Template background" />
-            <img id="overlayLogo" class="overlay-logo" src="" alt="Logo" />
-            <div id="overlayText" class="overlay-text"></div>
-            <div id="overlayOwner" class="overlay-owner"></div>
-            <div id="overlayPhone" class="overlay-phone"></div>
-            <div class="frame-decor top-left"></div>
-            <div class="frame-decor top-right"></div>
-            <div class="frame-decor bottom-left"></div>
-            <div class="frame-decor bottom-right"></div>
-          </div>
-        </div>
+            <!-- STEP 4: Customize & Preview (UPGRADED) -->
+            <div id="step4" class="step">
+                <h2 class="section-title">Customize & Preview</h2>
 
-        <div class="controls">
-          <button class="btn secondary" onclick="downloadStatus()">Download PNG</button>
-          <button class="btn" onclick="nextStep(5)">Continue</button>
-        </div>
-      </div>
+                <div class="step4-content">
+                    
+                    <!-- Preview Card -->
+                    <div class="preview-wrap">
+                        <div id="statusArea" class="status-card">
+                            <img id="statusBg" class="status-bg" src="" alt="Template background" />
+                            <!-- Initial logo shape class applied -->
+                            <img id="overlayLogo" class="overlay-logo shape-circle" src="" alt="Logo" />
+                            <!-- Initial font class applied -->
+                            <div id="overlayText" class="overlay-text font-cinzel"></div>
+                            <div id="overlayOwner" class="overlay-owner font-poppins"></div>
+                            <div id="overlayPhone" class="overlay-phone font-poppins"></div>
+                            <div class="frame-decor top-left"></div>
+                            <div class="frame-decor top-right"></div>
+                            <div class="frame-decor bottom-left"></div>
+                            <div class="frame-decor bottom-right"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Customization Panel (NEW) -->
+                    <div class="customization-panel">
+                        <h3 class="section-title" style="margin-top:0;">Live Editor Controls</h3>
 
-      <!-- STEP 5: Payment -->
-      <div id="step5" class="step">
-        <h2 class="section-title">Unlock HD Export — Pay ₹49</h2>
-        <img src="assets/upi-qr.png" alt="UPI QR" class="qr" />
-        <p class="payment-note">Scan QR with your UPI app (Google Pay / PhonePe / Paytm / BHIM). If you see "bank limit exceeded" or no bank name, please try above UPI QR or use the UPI ID in your app.</p>
-        <p class="payment-instruction">UPI ID: <strong>bojjasrikumar0806-1@oksbi</strong> — Pay ₹19 INR (IM a student, just trying this to cover my financial issues 🙏,you can help me if you can afford more.....)</p>
-        <a class="btn primary" href="upi://pay?pa=bojjasrikumar0806-1@oksbi&pn=Srikumar+Bojja&am=19&cu=INR" target="_blank" rel="noopener">Open UPI App</a>
-        <div class="form-actions">
-          <button class="btn" onclick="nextStep(6)">I Have Paid</button>app
-        </div>
-      </div>
+                        <!-- 1. Text Color Control -->
+                        <div class="controls-group">
+                            <label class="control-label">Text Color</label>
+                            <div class="color-input-wrap">
+                                <input type="color" id="textColorInput" value="#FFFFFF" oninput="updateColor('text', this.value)">
+                            </div>
+                        </div>
 
-      <!-- STEP 6: Thank you -->
-      <div id="step6" class="step">
-        <div class="thankyou">
-          <img src="assets/Harathi.jpg" alt="Harathi" class="harathi" />
-          <h2 class="section-title">Thank You — Happy Festivals!</h2>
-          <p class="blessing">May Goddess bless your shop with prosperity & joy.</p>
-          <audio controls>
-            <source src="assets/devotional-song.mp3" type="audio/mpeg" />
-          </audio>
-        </div>
-      </div>
+                        <!-- 2. Frame/Accent Color Control -->
+                        <div class="controls-group">
+                            <label class="control-label">Accent Color (Frame/Deco)</label>
+                            <div class="color-input-wrap">
+                                <input type="color" id="accentColorInput" value="#C27A00" oninput="updateColor('accent', this.value)">
+                            </div>
+                        </div>
 
-    </section>
-  </main>
+                        <!-- 3. Font Family Control -->
+                        <div class="controls-group">
+                            <label class="control-label">Font Style</label>
+                            <div id="fontControls" class="grid-options">
+                                <!-- Font buttons generated by JS -->
+                            </div>
+                        </div>
 
-  <!-- html2canvas -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+                        <!-- 4. Logo Shape Control -->
+                        <div class="controls-group">
+                            <label class="control-label">Logo Shape</label>
+                            <div id="shapeControls" class="grid-options">
+                                <!-- Shape buttons generated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-  <!-- Main JS -->
-  <script src="js/script.js"></script>
+                <div class="controls">
+                    <button class="btn secondary" onclick="downloadStatus()">Download PNG</button>
+                    <button class="btn" onclick="nextStep(5)">Continue</button>
+                </div>
+            </div>
+
+            <!-- STEP 5: Payment -->
+            <div id="step5" class="step">
+                <h2 class="section-title">Unlock HD Export — Pay ₹49</h2>
+                <!-- Used placeholder for QR -->
+                <img src="https://placehold.co/220x220/ffe59a/9b1c1c?text=UPI+QR+Code" alt="UPI QR" class="qr" />
+                <p class="payment-note">Scan QR with your UPI app (Google Pay / PhonePe / Paytm / BHIM). If you see "bank limit exceeded" or no bank name, please try above UPI QR or use the UPI ID in your app.</p>
+                <p class="payment-instruction">UPI ID: <strong>bojjasrikumar0806-1@oksbi</strong> — Pay ₹19 INR (IM a student, just trying this to cover my financial issues 🙏,you can help me if you can afford more.....)</p>
+                <a class="btn primary" href="upi://pay?pa=bojjasrikumar0806-1@oksbi&pn=Srikumar+Bojja&am=19&cu=INR" target="_blank" rel="noopener">Open UPI App</a>
+                <div class="form-actions">
+                    <button class="btn" onclick="nextStep(6)">I Have Paid</button>app
+                </div>
+            </div>
+
+            <!-- STEP 6: Thank you -->
+            <div id="step6" class="step">
+                <div class="thankyou">
+                    <!-- Used placeholder for Harathi -->
+                    <img src="https://placehold.co/220x220/fff/c27a00?text=Harathi" alt="Harathi" class="harathi" />
+                    <h2 class="section-title">Thank You — Happy Festivals!</h2>
+                    <p class="blessing">May Goddess bless your shop with prosperity & joy.</p>
+                    <audio controls>
+                        <!-- Used placeholder audio -->
+                        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg" />
+                    </audio>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <script>
+        /* main app script for Festive Ad Generator */
+        let currentStep = 1;
+        let ownerDetails = {};
+        let selectedTemplate = '';
+
+        // Global variable to track the current font class
+        let currentFontClass = 'font-cinzel';
+        let currentShapeClass = 'shape-circle';
+
+        const FONT_OPTIONS = [
+            { name: 'Divine Cinzel', class: 'font-cinzel' },
+            { name: 'Flowing Vibes', class: 'font-great-vibes' },
+            { name: 'Modern Poppins', class: 'font-poppins' },
+            { name: 'Bold Bebas', class: 'font-bebas-neue' },
+            { name: 'Slab Serif', class: 'font-roboto-slab' },
+            { name: 'Clean Inter', class: 'font-inter' },
+        ];
+
+        const SHAPE_OPTIONS = [
+            { name: 'Circle', class: 'shape-circle' },
+            { name: 'Sharp Square', class: 'shape-square' },
+            { name: 'Rounded Box', class: 'shape-rounded-box' },
+            { name: 'Star-ish Cut', class: 'shape-star' },
+        ];
+
+
+        /* Replaces original alert() */
+        function showMessage(msg) {
+            const alertEl = document.getElementById('customAlert');
+            alertEl.textContent = msg;
+            alertEl.style.display = 'block';
+            setTimeout(() => {
+                alertEl.style.display = 'none';
+            }, 3000);
+        }
+
+        /* Step navigation */
+        function nextStep(step){
+            const oldStep = document.getElementById('step' + currentStep);
+            if (oldStep) oldStep.classList.remove('active');
+
+            currentStep = step;
+            const newStep = document.getElementById('step' + currentStep);
+            if (newStep) newStep.classList.add('active');
+
+            // Initialize controls if moving to Step 4
+            if (step === 4) {
+                initializeControls();
+            }
+
+            // scroll into view for mobile friendliness
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* Save details + read logo file */
+        function saveDetails(){
+            const shop = document.getElementById('shopName').value.trim();
+            const owner = document.getElementById('ownerName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const logoFile = document.getElementById('logo').files[0];
+
+            if(!shop || !owner || !phone || !logoFile){
+                showMessage('Please fill all details and upload logo.');
+                return;
+            }
+            ownerDetails.shopName = shop;
+            ownerDetails.ownerName = owner;
+            ownerDetails.phone = phone;
+
+            const reader = new FileReader();
+            reader.onload = function(e){
+                ownerDetails.logoSrc = e.target.result;
+                nextStep(3);
+            };
+            reader.readAsDataURL(logoFile);
+        }
+
+        /* Select template and prepare preview */
+        function selectTemplate(imgSrc){
+            selectedTemplate = imgSrc;
+            
+            const bg = document.getElementById('statusBg');
+            const logo = document.getElementById('overlayLogo');
+            const text = document.getElementById('overlayText');
+            const ownerEl = document.getElementById('overlayOwner');
+            const phoneEl = document.getElementById('overlayPhone');
+
+            bg.src = imgSrc;
+            // overlay text & owner
+            text.textContent = ownerDetails.shopName || '';
+            ownerEl.textContent = ownerDetails.ownerName ? 'By: ' + ownerDetails.ownerName : '';
+            phoneEl.textContent = ownerDetails.phone ? '📞 ' + ownerDetails.phone : '';
+            // overlay logo data-url
+            if(ownerDetails.logoSrc){
+                logo.src = ownerDetails.logoSrc;
+                logo.style.display = 'block';
+            } else {
+                logo.style.display = 'none';
+            }
+
+            // Apply current styles on selection
+            applyFontClasses(currentFontClass);
+            applyShapeClasses(currentShapeClass);
+            
+            // little visual pop
+            const card = document.querySelector('.status-card');
+            card.classList.add('zoomIn');
+            setTimeout(()=>card.classList.remove('zoomIn'),900);
+
+            nextStep(4);
+        }
+
+        /* Download status as PNG using html2canvas */
+        function downloadStatus(){
+            const area = document.getElementById('statusArea');
+            // use scale 2 for higher quality
+            html2canvas(area, { scale: 2, useCORS: true, allowTaint: true }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'FestiveAd.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err=>{
+                console.error("Download failed:", err);
+                showMessage('Download failed. Please check console for details.');
+            });
+        }
+
+        /* ensure background music unmute on first user interaction */
+        document.addEventListener('click', function onFirstClick(){
+            const bg = document.getElementById('bgMusic');
+            if(bg) bg.muted = false;
+            document.removeEventListener('click', onFirstClick);
+        });
+
+        /* Floating diyas - ensure working (using placeholder image) */
+        function createFloatingDiyas(count = 8){
+            const container = document.getElementById('diya-container');
+            if(!container) return;
+            // Placeholder for diya image
+            const diyaSrc = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MCA1MCI+PHBhdGggZmlsbD0iI0ZGQjMzMyIgZD0iTTI1LDQ4QTE4LDE4LDAsMCwxLDcsMzBjMC00LjE2LDEuNTMtNy43OCw0LjU2LTEwLjYxTDExLjU1LDE5QTEyLDEyLDAsMCwxLDE5LDYuMDRsMy41Ni01LjQ4YTQuMDgsNC4wOCwwLDAsMSw1Ljg4LDByMy41Niw1LjQ4YTEyLDEyLDAsMCwxLDcuNDUsMTIuOTZMMzguNDMsMTkuMzljMy4wMywyLjg0LDQuNTYsNi40NSw0LjU2LDEwLjYxQTE4LDE4LDAsMCwxLDI1LDQ4WiI+PC9wYXRoPjxwYXRoIGZpbGw9IiNGRkFBMDAiIGQ9Ik0yNSw0OGExOCwxOCwwLDAsMS0xNC02LjQ4TDI1LDMwLjEybDM5LDExLjRBMjIuMjIsMjIuMjIsMCwwLDEsNDMsNDIuMTJBNTIsNTIsMCwwLDAsMjUsNDhaIj48L3BhdGg+PHBhdGggZmlsbD0iI0ZGRkYwMCIgZD0iTTIzLDMyYy0uNzgtLjI1LTEuNDgtLjYzLTEuNzctMS42NC0uNzMtMi41MSwxLjE0LTUuODIsNC43MS05LjUzLDMuNTctMy43MSw1LjQzLTcuMDIsNC43MS05LjUzYy0uNjItMi4xNC0zLjA5LTIuMTQtMy43MSwwYy0uNzgsMi41MS0yLjc0LDIuOTctNC40NCwyLjYxYTMuNTQsMy41NCwwLDAsMS0uNjUtLjcyYy0xLjQzLTIuNzItLjIxLTguMTYsMS44Ny0xMC44MnMxMS40Ny0yLjczLDEyLjQsMS44M2MxLjgsOC43Ny0yLjE4LDE3LjgyLTUuNDksMjEuMTNzLTIuMjQsMS43LTIuNTksMS40OFoiPjwvcGF0aD48L3N2Zz4=';
+            
+            for(let i=0;i<count;i++){
+                const img = document.createElement('img');
+                img.src = diyaSrc; 
+                img.className = 'diya';
+                
+                const left = Math.random() * 100;
+                img.style.left = left + 'vw';
+                
+                img.style.top = (100 + Math.random() * 20) + 'vh';
+                
+                const size = 34 + Math.random()*36;
+                img.style.width = size + 'px';
+                img.style.height = 'auto';
+                
+                const duration = 9 + Math.random()*8; 
+                img.style.animation = `floatUp ${duration}s linear infinite`;
+                
+                img.style.animationDelay = (Math.random()*6) + 's';
+                container.appendChild(img);
+            }
+        }
+
+        /* run diyas on load */
+        window.addEventListener('load', ()=>{
+            createFloatingDiyas(9);
+        });
+
+        // --- NEW CUSTOMIZATION FUNCTIONS ---
+
+        function initializeControls() {
+            const fontControls = document.getElementById('fontControls');
+            const shapeControls = document.getElementById('shapeControls');
+
+            // 1. Initialize Font Buttons
+            fontControls.innerHTML = '';
+            FONT_OPTIONS.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option.name;
+                button.className = 'option-button ' + option.class;
+                if (option.class === currentFontClass) {
+                    button.classList.add('active');
+                }
+                button.onclick = () => updateFont(option.class, button);
+                fontControls.appendChild(button);
+            });
+
+            // 2. Initialize Shape Buttons
+            shapeControls.innerHTML = '';
+            SHAPE_OPTIONS.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option.name;
+                button.className = 'option-button';
+                if (option.class === currentShapeClass) {
+                    button.classList.add('active');
+                }
+                button.onclick = () => updateShape(option.class, button);
+                shapeControls.appendChild(button);
+            });
+        }
+
+
+        // Function to remove old font classes and apply new ones
+        function applyFontClasses(newFontClass) {
+            const textElements = [
+                document.getElementById('overlayText'), 
+                document.getElementById('overlayOwner'), 
+                document.getElementById('overlayPhone')
+            ];
+
+            textElements.forEach(el => {
+                // Remove all possible font classes first
+                FONT_OPTIONS.forEach(f => el.classList.remove(f.class));
+                el.classList.add(newFontClass);
+            });
+            currentFontClass = newFontClass;
+        }
+
+        // Font Update Logic
+        function updateFont(newFontClass, clickedButton) {
+            applyFontClasses(newFontClass);
+
+            // Update active state of buttons
+            const buttons = clickedButton.parentElement.querySelectorAll('.option-button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            clickedButton.classList.add('active');
+        }
+
+        // Function to remove old shape classes and apply new ones
+        function applyShapeClasses(newShapeClass) {
+            const logoEl = document.getElementById('overlayLogo');
+            
+            // Remove all possible shape classes first
+            SHAPE_OPTIONS.forEach(s => logoEl.classList.remove(s.class));
+            
+            logoEl.classList.add(newShapeClass);
+            currentShapeClass = newShapeClass;
+        }
+
+        // Shape Update Logic
+        function updateShape(newShapeClass, clickedButton) {
+            applyShapeClasses(newShapeClass);
+            
+            // Update active state of buttons
+            const buttons = clickedButton.parentElement.querySelectorAll('.option-button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            clickedButton.classList.add('active');
+        }
+
+        // Color Update Logic
+        function updateColor(type, color) {
+            if (type === 'text') {
+                // Apply color to all overlay text elements
+                document.getElementById('overlayText').style.color = color;
+                document.getElementById('overlayOwner').style.color = color;
+                document.getElementById('overlayPhone').style.color = color;
+            } else if (type === 'accent') {
+                // Apply color to accent variables for frame/decoration
+                document.documentElement.style.setProperty('--accent', color);
+            }
+        }
+    </script>
 </body>
 </html>
