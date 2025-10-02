@@ -132,10 +132,19 @@ function selectTemplate(imgSrc){
         applyShapeClasses(currentShapeClass);
         applyPositionClass(currentPositionClass);
         
-        // Ensure color and size inputs match current visual state
+        // --- FIX START: DEFENSIVELY READ COLOR INPUTS ---
+        // Accessing .value on a null element crashes. We must check for existence first.
+        const textColorInput = document.getElementById('textColorInput');
+        const accentColorInput = document.getElementById('accentColorInput');
+
+        // Use element value if available, otherwise use a safe default
+        const textColor = textColorInput ? textColorInput.value : '#FFFFFF';
+        const accentColor = accentColorInput ? accentColorInput.value : '#D4AF37'; // Default gold
+        
         document.getElementById('overlayText').style.fontSize = currentFontSize + 'px';
-        updateColor('text', document.getElementById('textColorInput').value);
-        updateColor('accent', document.getElementById('accentColorInput').value);
+        updateColor('text', textColor);
+        updateColor('accent', accentColor);
+        // --- FIX END ---
         
         // little visual pop
         const card = document.querySelector('.status-card');
@@ -146,7 +155,8 @@ function selectTemplate(imgSrc){
         nextStep(4);
     } catch (e) {
         console.error("Error during template selection:", e);
-        showMessage("An error occurred preparing the preview. Try refreshing.");
+        // Using a more generic message here as the console will show the full error
+        showMessage("An error occurred preparing the preview. Check the console for details.");
     }
 }
 
