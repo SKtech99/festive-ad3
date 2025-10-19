@@ -17,7 +17,7 @@
     --btn-secondary-border: var(--accent);
 }
 
-/* --- FONT CLASSES (Truncated for brevity, all 50+ are active) --- */
+/* --- FONT CLASSES (Truncated for brevity, defined in HTML link) --- */
 .font-great-vibes { font-family: 'Great Vibes', cursive; }
 .font-cinzel { font-family: 'Cinzel', serif; }
 .font-poppins { font-family: 'Poppins', sans-serif; }
@@ -57,7 +57,6 @@
 html,body{height:100%;margin:0; scroll-behavior: smooth;}
 body{
     font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    /* Fit to screen width on mobile */
     min-width: 320px; 
     overflow-x: hidden;
     background: linear-gradient(180deg, var(--theme-bg-start) 0%, var(--theme-bg-end) 100%); 
@@ -68,7 +67,6 @@ body{
 }
 .page{max-width:1200px;margin:0 auto} 
 .logo{width:120px;border-radius:50%;box-shadow:0 8px 30px rgba(0,0,0,0.15);transition: transform 0.3s ease;}
-.logo:hover { transform: scale(1.05); }
 .title{
     font-family:"Cinzel", serif; 
     font-size:42px;
@@ -85,19 +83,30 @@ body{
 .step.active{display:block;animation:fadeIn 420ms ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
-/* --- STEP 1: TRADITIONAL WELCOME ENTRY (3D Effect) --- */
+/* --- STEP 1: TRADITIONAL WELCOME ENTRY (STRUCTURE FIX) --- */
 .welcome-entry {
-    position: relative; max-width: 600px; margin: 0 auto 30px; perspective: 1000px;
+    position: relative; 
+    max-width: 600px; 
+    margin: 0 auto 30px; 
+    perspective: 1000px;
+    text-align: center; /* Ensure contents are centered */
 }
 .gate-img {
     width: 100%; height: auto; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.25);
     transform: rotateY(10deg); transition: transform 0.5s ease;
 }
 .greetings-card {
-    position: absolute; top: 50%; left: 50%; 
+    /* Centering fix */
+    position: absolute; 
+    top: 50%; 
+    left: 50%; 
     transform: translate(-50%, -50%) rotateY(-10deg) translateZ(50px); 
-    background: rgba(255, 255, 255, 0.9); padding: 20px 30px; border-radius: 10px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3); border: 3px solid var(--accent);
+    
+    background: rgba(255, 255, 255, 0.9); 
+    padding: 20px 30px; 
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3); 
+    border: 3px solid var(--accent);
     text-align: center;
 }
 .greeting-text { font-family: 'Great Vibes', cursive; font-size: 40px; color: var(--maroon); margin: 0; }
@@ -227,8 +236,6 @@ body{
     border-color: var(--gold);
     box-shadow: 0 4px 12px rgba(155,28,28,0.4);
 }
-/* Range Slider Styling */
-input[type="range"]::-webkit-slider-thumb { background: var(--accent); }
 input[type="number"] { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc; }
 
 
@@ -267,10 +274,6 @@ input[type="number"] { width: 100%; padding: 8px; border-radius: 8px; border: 1p
     background:linear-gradient(45deg,#fff4d6,#ffd77a);opacity:0.98;border-radius:8px; z-index: 10;
     box-shadow: 0 0 10px rgba(0,0,0,0.3); transition: all 0.3s ease;
 }
-.frame-decor.top-left{left:-12px;top:-12px;transform:rotate(-15deg)}
-.frame-decor.top-right{right:-12px;top:-12px;transform:rotate(15deg)}
-.frame-decor.bottom-left{left:-12px;bottom:-12px;transform:rotate(15deg)}
-.frame-decor.bottom-right{right:-12px;bottom:-12px;transform:rotate(-15deg)}
 
 /* LOGO & SHAPE CLASSES */
 #overlayLogo{
@@ -285,7 +288,7 @@ input[type="number"] { width: 100%; padding: 8px; border-radius: 8px; border: 1p
 .shape-none { border: 0 !important; border-radius: 0 !important; }
 
 
-/* --- DRAG & DROP LAYERS --- */
+/* --- DRAG & DROP LAYERS (STABILITY FIX) --- */
 .draggable-layer {
     position: absolute; width: 80%; height: auto; min-height: 50px;
     transition: all 0.3s ease !important; z-index: 20; padding: 5px; cursor: grab;
@@ -311,33 +314,12 @@ input[type="number"] { width: 100%; padding: 8px; border-radius: 8px; border: 1p
     -webkit-text-stroke-width: var(--text-stroke-width, 0px);
     -webkit-text-stroke-color: var(--text-stroke-color, #000000);
 }
-.overlay-text{ font-family:"Cinzel",serif; font-size: 28px; line-height:1.1; }
-.overlay-owner, .overlay-phone { font-size:17px; font-weight:700; }
-
-/* Placeholder and Shadow */
 .editable.empty:not(:focus):empty::before { content: attr(data-placeholder); color: rgba(255, 255, 255, 0.7); display: block; pointer-events: none; }
 .shadow-high { text-shadow:0 6px 18px rgba(0,0,0,0.8), 0 0 5px rgba(255,255,255,0.2); }
-.shadow-low { text-shadow: 0 2px 4px rgba(0,0,0,0.6); }
-.shadow-none { text-shadow: none; }
 
-
-/* OFFER BANNER LAYER */
-.offer-layer { width: 60%; height: auto; padding: 15px 0; text-align: center; }
-.offer-banner {
-    display: block; width: 100%; font-size: 24px; font-weight: 900; padding: 10px 15px;
-    text-transform: uppercase; transition: all 0.3s ease; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
-.banner-ribbon { background: var(--ribbon-color, #FFD700); border-radius: 5px; }
-.banner-badge { border-radius: 50%; padding: 20px 10px; line-height: 1.2; background: var(--offer-bg, #E0115F); }
-.banner-simple { background: rgba(0,0,0,0.5); border: 2px solid white; border-radius: 8px; }
-
-/* CTA BLOCK LAYER */
-.cta-layer { width: 90%; text-align: center; top: 85%; }
+/* CTA Block Style (Example) */
 .cta-block-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-.cta-item { font-size: 16px; padding: 10px; border-radius: 8px; font-weight: 700; transition: all 0.3s ease; }
 .cta-gold { background: linear-gradient(135deg, var(--accent), var(--gold)); color: var(--text); border: 1px solid var(--accent); }
-.cta-green { background: linear-gradient(135deg, #4CAF50, #81C784); color: white; border: 1px solid #388E3C; }
-.cta-blue { background: #007FFF; color: white; border-bottom: 5px solid #0059B3; border-radius: 0; }
 
 /* DECORATIVE ELEMENTS LAYER */
 .decorative-layer { width: 100%; height: 100%; left: 0; top: 0; transform: none; padding: 0; pointer-events: none; border: none !important; box-shadow: none !important; }
@@ -346,8 +328,6 @@ input[type="number"] { width: 100%; padding: 8px; border-radius: 8px; border: 1p
     position: absolute; height: auto; object-fit: contain; transition: all 0.3s ease;
     pointer-events: auto; cursor: grab;
 }
-.decorative-layer .decorative-garland { pointer-events: none; }
-
 
 /* --- LOADING ANIMATION --- */
 .loading-overlay {
@@ -373,20 +353,10 @@ input[type="number"] { width: 100%; padding: 8px; border-radius: 8px; border: 1p
     border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); text-align: center;
     border: 2px solid var(--accent);
 }
-.qr{width:200px;border-radius:10px;border:8px solid var(--soft);box-shadow:0 10px 30px rgba(0,0,0,0.12); margin-bottom: 20px;}
 .blessing{font-family:"Great Vibes",cursive;color:#7a3b2b;font-size:28px; margin: 15px 0;}
-.note { font-size: 14px; color: #7a3b2b; }
-#diya-container{position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:5}
-.diya{position:absolute; width:60px;height:60px;opacity:0.95; transform-origin:center; will-change:transform,opacity; filter:drop-shadow(0 8px 15px rgba(255, 165, 0, 0.4));}
-@keyframes floatUp {
-    0%{ transform:translateY(110vh) rotate(0) scale(0.8); opacity:0 }
-    10%{ opacity:1 }
-    100%{ transform:translateY(-20vh) rotate(360deg) scale(1.1); opacity:0 }
-}
+#diya-container{pointer-events:none;z-index:5}
 .controls{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin:20px 0}
 .section-title{font-family:"Cinzel",serif;color:var(--maroon);font-size:24px;margin:15px 0; font-weight: 700;}
-.zoomIn{animation:zoomIn .9s ease}
-@keyframes zoomIn{from{transform:scale(.98);opacity:.7}to{transform:scale(1);opacity:1)}}
 
 /* --- MOBILE RESPONSIVENESS (FINAL FIXES) --- */
 @media (max-width:900px){
@@ -397,7 +367,6 @@ input[type="number"] { width: 100%; padding: 8px; border-radius: 8px; border: 1p
     .title{font-size:32px}
     /* Ad card fits perfectly */
     .status-card{width:100%; max-width: 90vw; margin: 0 auto;} 
-    .overlay-logo{width: 80px; height: 80px;}
     .template-gallery{grid-template-columns: repeat(2, 1fr);}
     /* Control panel grids adapt to single column gracefully */
     .grid-options.cols-3, .grid-options.cols-4 { grid-template-columns: repeat(2, 1fr); }
