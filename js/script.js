@@ -200,13 +200,22 @@ function saveDetails(){
     }
 }
 
-/* Select template and prepare preview */
+/* Select template and prepare preview - FIXED LOADING ISSUE */
 function selectTemplate(imgSrc){
     showLoading(true);
     selectedTemplate = imgSrc;
     
     const bg = document.getElementById('statusBg');
-    bg.onload = function() {
+    
+    // Use a temporary Image object to reliably catch the load event, even from cache
+    const tempImg = new Image();
+    tempImg.src = imgSrc;
+
+    tempImg.onload = function() {
+        // Set the background source
+        bg.src = imgSrc;
+        
+        // Set text contents, logo, etc.
         document.getElementById('overlayText').textContent = ownerDetails.shopName;
         document.getElementById('overlayOwner').textContent = ownerDetails.ownerName;
         document.getElementById('overlayPhone').textContent = ownerDetails.phone;
@@ -223,15 +232,19 @@ function selectTemplate(imgSrc){
         card.classList.add('zoomIn');
         setTimeout(()=>card.classList.remove('zoomIn'),900);
         
+        // Proceed to the next step, dismissing the loading screen
         nextStep(4);
     };
-    bg.onerror = function() {
+    
+    tempImg.onerror = function() {
         showLoading(false);
-        showMessage("Error loading template image.");
+        showMessage("Error loading template image. Proceeding with a blank background.");
+        
+        // Ensure the step advances even if the image fails to load
         nextStep(4);
-    }
-    bg.src = imgSrc;
+    };
 }
+
 
 /* Download status as PNG using html2canvas - FINAL STABILITY FIX */
 async function downloadStatus(){
@@ -756,6 +769,80 @@ function createOptionButton(text, onClickHandler, className = 'option-button') {
     return button;
 }
 
+// --- INITIALIZATION ---
+function initializeControls() {
+    if (document.getElementById('fontControls').children.length > 0) return; 
+    
+    // 1. Frame Buttons
+    const frameControls = document.getElementById('frameControls');
+    FRAME_OPTIONS.forEach(option => {
+        const button = createOptionButton(option.name, () => updateFrame(option.class, button));
+        if (option.class === currentFrameClass) button.classList.add('active');
+        frameControls.appendChild(button);
+    });
+
+    // 2. Color Theme Presets
+    const colorThemePresets = document.getElementById('colorThemePresets');
+    COLOR_THEMES.forEach(theme => {
+        const button = createOptionButton(theme.name.split(' ')[0], () => applyTheme(theme, button));
+        button.style.background = `linear-gradient(45deg, ${theme.accent}, ${theme.text === '#FFFFFF' ? '#e0e0e0' : theme.text})`;
+        button.style.color = theme.text;
+        colorThemePresets.appendChild(button);
+    });
+
+    // 3. Font Buttons
+    const fontControls = document.getElementById('fontControls');
+    FONT_OPTIONS.forEach(option => {
+        const button = createOptionButton(option.name.split(' ')[0], () => updateFont(option.class, button));
+        button.classList.add(option.class);
+        if (option.class === currentFontClass) button.classList.add('active');
+        fontControls.appendChild(button);
+    });
+
+    // 4. Shadow Buttons
+    const shadowGrid = document.getElementById('shadowControlsGrid');
+    SHADOW_OPTIONS.forEach(option => {
+        const button = createOptionButton(option.name, () => updateShadow(option.class, button));
+        if (option.class === currentShadow) button.classList.add('active');
+        shadowGrid.appendChild(button);
+    });
+
+    // 5. Shape Buttons (for logo)
+    const shapeControls = document.getElementById('shapeControls');
+    SHAPE_OPTIONS.forEach(option => {
+        const button = createOptionButton(option.name, () => updateShape(option.class, button));
+        if (option.class === currentShapeClass) button.classList.add('active');
+        shapeControls.appendChild(button);
+    });
+
+    // 6. Decorative Element Grid 
+    const decorativeElementGrid = document.getElementById('decorativeElementGrid');
+    DECORATIVE_ELEMENTS.forEach(element => {
+        const button = document.createElement('button');
+        button.className = 'option-button decor-option';
+        button.innerHTML = `<img src="${element.src}" alt="${element.name}" style="width:30px;height:30px;object-fit:contain;"><br><small>${element.name}</small>`;
+        button.onclick = () => { recordHistory(); addDecorativeElement(element); };
+        decorativeElementGrid.appendChild(button);
+    });
+
+    // 7. Garland Controls
+    const garlandControls = document.getElementById('garlandControls');
+    GARLAND_OPTIONS.forEach(garland => {
+        const button = document.createElement('button');
+        button.className = 'option-button decor-option';
+        button.innerHTML = `<img src="${garland.src}" alt="${garland.name}" style="width:100%;height:30px;object-fit:contain;"><br><small>${garland.name}</small>`;
+        button.onclick = () => { recordHistory(); addDecorativeGarland(garland); };
+        garlandControls.appendChild(button);
+    });
+    
+    // 8. Text Alignment Controls
+    const textAlignControls = document.getElementById('textAlignControls');
+    textAlignControls.querySelectorAll('.option-button').forEach(btn => {
+        btn.onclick = () => { recordHistory(); updateTextAlign(btn.dataset.align); };
+    });
+}
+
+
 // Applies font to all relevant text elements of the ACTIVE LAYER
 function applyFontToTextElements(newFontClass) {
     if (!currentActiveElement) return;
@@ -821,7 +908,8 @@ function updateShape(newShapeClass, clickedButton) {
 
 function toggleLogoBorder(show) {
     const logoEl = document.getElementById('overlayLogo');
-    recordHistory();
+    if (!logoEl) return;
+    
     if (show) {
         logoEl.style.borderWidth = '4px';
     } else {
@@ -861,7 +949,6 @@ function applyFrameClass(newFrameClass) {
     FRAME_OPTIONS.forEach(f => card.classList.remove(f.class));
     card.classList.add(newFrameClass);
 
-    // Show/hide corner decor based on class
     decorElements.forEach(el => {
         el.style.display = (newFrameClass === 'frame-default' || newFrameClass === 'frame-temple' || newFrameClass === 'frame-swirl' || newFrameClass === 'frame-artdeco') ? 'block' : 'none';
     });
@@ -903,12 +990,11 @@ function updateOfferBannerColors() {
 
     recordHistory();
     const bgColor = document.getElementById('offerBannerBgColor').value;
-    const textColor = '#FFFFFF'; // Keeping text white for contrast
+    const textColor = '#FFFFFF'; 
 
     bannerElement.style.backgroundColor = bgColor;
     bannerElement.style.color = textColor;
 
-    // Specific adjustments for ribbon style (CSS pseudo-elements)
     if (currentOfferBannerStyle === 'banner-ribbon') {
         bannerElement.style.setProperty('--ribbon-color', bgColor);
         bannerElement.style.setProperty('--ribbon-text-color', textColor);
@@ -923,7 +1009,7 @@ function setCTAStyle(styleClass, activateButton = true) {
     recordHistory();
     ctaItems.forEach(item => {
         item.classList.remove('cta-gold', 'cta-green', 'cta-blue');
-        item.classList.add(styleClass); // Apply new style
+        item.classList.add(styleClass);
     });
     currentCtaStyle = styleClass;
 
