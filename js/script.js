@@ -30,7 +30,7 @@ const MAX_HISTORY = 10;
 let history = [];
 let historyIndex = -1;
 
-// --- EXPANDED OPTIONS ---
+// --- EXPANDED OPTIONS (Used for Initialization) ---
 
 const FRAME_OPTIONS = [ 
     { name: 'Classic Gold', class: 'frame-default' },
@@ -282,6 +282,65 @@ async function downloadStatus(){
         document.getElementById('confetti-container').innerHTML = '';
     }
 }
+
+// --- NEW 3D ANIMATION LOGIC (Confetti Overlay) ---
+function createConfettiOverlay(width, height) {
+    return new Promise(resolve => {
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+
+        const numStars = 100;
+        for (let i = 0; i < numStars; i++) {
+            const x = Math.random() * width;
+            const y = Math.random() * height;
+            const size = Math.random() * 5 + 2;
+            const color = ['#FFD700', '#FF4500', '#FFFFFF', '#ADFF2F', '#FF69B4'][Math.floor(Math.random() * 5)];
+
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.shadowColor = color;
+            ctx.shadowBlur = size * 1.5;
+            ctx.fill();
+        }
+        resolve(canvas);
+    });
+}
+
+/* ensure background music unmute on first user interaction */
+document.addEventListener('click', function onFirstClick(){
+    const bg = document.getElementById('bgMusic');
+    if(bg && bg.muted) {
+        bg.muted = false;
+        bg.play().catch(e => console.log('Autoplay blocked.'));
+    }
+    document.removeEventListener('click', onFirstClick);
+});
+
+/* Floating diyas (visual flair) */
+function createFloatingDiyas(count = 12){ 
+    const container = document.getElementById('diya-container');
+    if(!container) return;
+    const diyaSrc = 'assets/diya.png'; 
+    
+    for(let i=0;i<count;i++){
+        const img = document.createElement('img');
+        img.src = diyaSrc; 
+        img.className = 'diya';
+        img.style.left = Math.random() * 100 + 'vw';
+        img.style.top = (100 + Math.random() * 20) + 'vh';
+        img.style.width = (30 + Math.random()*40) + 'px';
+        img.style.height = 'auto';
+        img.style.animation = `floatUp ${8 + Math.random()*10}s linear infinite`;
+        img.style.animationDelay = (Math.random()*8) + 's';
+        container.appendChild(img);
+    }
+}
+window.addEventListener('load', ()=>{
+    createFloatingDiyas(12);
+});
 
 // --- DRAG & RESIZE LOGIC (CRITICAL MOBILE FIX) ---
 function initializeDragAndResize() {
@@ -537,14 +596,12 @@ function setActiveLayer(layerId, syncHistory = true) {
 }
 
 function updateLayerControlsVisibility() {
-    // Hide all specific controls
     document.getElementById('textControls').classList.add('hidden');
     document.getElementById('imageControls').classList.add('hidden');
     document.getElementById('offerBannerControls').classList.add('hidden');
     document.getElementById('ctaBlockControls').classList.add('hidden');
     document.getElementById('decorativeControls').classList.add('hidden');
 
-    // Show controls relevant to the active layer
     if (activeLayerId === 'mainMessageLayer' || activeLayerId === 'offerBannerLayer' || activeLayerId === 'ctaBlockLayer') {
         document.getElementById('textControls').classList.remove('hidden');
     }
@@ -613,6 +670,43 @@ function resetActiveLayerPosition() {
 
 // --- CORE DESIGN LOGIC (Apply Theme, Font, etc.) ---
 
+function applyInitialStylesToPreview() {
+    // Apply theme colors first
+    updateColor('text', currentTextColor);
+    updateColor('accent', currentAccentColor);
+    document.getElementById('textColorInput').value = currentTextColor;
+    document.getElementById('accentColorInput').value = currentAccentColor;
+    
+    // Then apply specific layer styles
+    applyFontToTextElements(currentFontClass);
+    applyShapeClasses(currentShapeClass);
+    applyShadowClass(currentShadow); 
+    applyFrameClass(currentFrameClass); 
+    updateFontSize(currentFontSize);
+    updateTextStroke();
+
+    const logo = document.getElementById('overlayLogo');
+    if (ownerDetails.logoSrc && ownerDetails.logoSrc !== DEFAULT_LOGO) {
+         logo.src = ownerDetails.logoSrc;
+         logo.style.display = 'block';
+    } else {
+         logo.style.display = 'none';
+    }
+    toggleLogoBorder(true); 
+
+    setOfferBannerStyle(currentOfferBannerStyle, false); 
+    setCTAStyle(currentCtaStyle, false);
+
+    // Ensure contenteditable fields have placeholder logic applied
+    document.querySelectorAll('.editable').forEach(el => {
+        if (el.textContent.trim() === '') {
+            el.classList.add('empty');
+        } else {
+            el.classList.remove('empty');
+        }
+    });
+}
+
 function applyTheme(theme, clickedButton) {
     recordHistory();
     
@@ -653,151 +747,13 @@ function rgbToHex(rgb) {
     return '#' + parts.join('');
 }
 
-// --- INITIALIZATION ---
-function initializeControls() {
-    if (document.getElementById('fontControls').children.length > 0) return; 
-    
-    const createOptionButton = (text, onClickHandler, className = 'option-button') => {
-        const button = document.createElement('button');
-        button.textContent = text;
-        button.className = className;
-        button.onclick = () => { recordHistory(); onClickHandler(); }; 
-        return button;
-    };
-    
-    // 1. Frame Buttons
-    const frameControls = document.getElementById('frameControls');
-    FRAME_OPTIONS.forEach(option => {
-        const button = createOptionButton(option.name, () => updateFrame(option.class, button));
-        if (option.class === currentFrameClass) button.classList.add('active');
-        frameControls.appendChild(button);
-    });
-
-    // 2. Color Theme Presets
-    const colorThemePresets = document.getElementById('colorThemePresets');
-    COLOR_THEMES.forEach(theme => {
-        const button = createOptionButton(theme.name.split(' ')[0], () => applyTheme(theme, button));
-        button.style.background = `linear-gradient(45deg, ${theme.accent}, ${theme.text === '#FFFFFF' ? '#e0e0e0' : theme.text})`;
-        button.style.color = theme.text;
-        colorThemePresets.appendChild(button);
-    });
-
-    // 3. Font Buttons
-    const fontControls = document.getElementById('fontControls');
-    FONT_OPTIONS.forEach(option => {
-        const button = createOptionButton(option.name.split(' ')[0], () => updateFont(option.class, button));
-        button.classList.add(option.class);
-        if (option.class === currentFontClass) button.classList.add('active');
-        fontControls.appendChild(button);
-    });
-
-    // 4. Shadow Buttons
-    const shadowGrid = document.getElementById('shadowControlsGrid');
-    SHADOW_OPTIONS.forEach(option => {
-        const button = createOptionButton(option.name, () => updateShadow(option.class, button));
-        if (option.class === currentShadow) button.classList.add('active');
-        shadowGrid.appendChild(button);
-    });
-
-    // 5. Shape Buttons (for logo)
-    const shapeControls = document.getElementById('shapeControls');
-    SHAPE_OPTIONS.forEach(option => {
-        const button = createOptionButton(option.name, () => updateShape(option.class, button));
-        if (option.class === currentShapeClass) button.classList.add('active');
-        shapeControls.appendChild(button);
-    });
-
-    // 6. Decorative Element Grid 
-    const decorativeElementGrid = document.getElementById('decorativeElementGrid');
-    DECORATIVE_ELEMENTS.forEach(element => {
-        const button = document.createElement('button');
-        button.className = 'option-button decor-option';
-        button.innerHTML = `<img src="${element.src}" alt="${element.name}" style="width:30px;height:30px;object-fit:contain;"><br><small>${element.name}</small>`;
-        button.onclick = () => { recordHistory(); addDecorativeElement(element); };
-        decorativeElementGrid.appendChild(button);
-    });
-
-    // 7. Garland Controls
-    const garlandControls = document.getElementById('garlandControls');
-    GARLAND_OPTIONS.forEach(garland => {
-        const button = document.createElement('button');
-        button.className = 'option-button decor-option';
-        button.innerHTML = `<img src="${garland.src}" alt="${garland.name}" style="width:100%;height:30px;object-fit:contain;"><br><small>${garland.name}</small>`;
-        button.onclick = () => { recordHistory(); addDecorativeGarland(garland); };
-        garlandControls.appendChild(button);
-    });
-    
-    // 8. Text Alignment Controls
-    const textAlignControls = document.getElementById('textAlignControls');
-    textAlignControls.querySelectorAll('.option-button').forEach(btn => {
-        btn.onclick = () => { recordHistory(); updateTextAlign(btn.dataset.align); };
-    });
-}
-// ... rest of the helper functions (applyFontToTextElements, updateFont, updateFontSize, etc.) ...
-// (Note: The remaining helper functions need to be copied directly from the last full response's JS file to be complete, as they were simplified in this response for brevity)
-
-// 6. Offer Banner Style Controls
-    const offerBannerStyleControls = document.getElementById('offerBannerStyleControls');
-    offerBannerStyleControls.querySelectorAll('.option-button').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.dataset.style === currentOfferBannerStyle) btn.classList.add('active');
-    });
-
-    // 7. CTA Block Style Controls
-    const ctaBlockStyleControls = document.getElementById('ctaBlockStyleControls');
-    ctaBlockStyleControls.querySelectorAll('.option-button').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.dataset.style === currentCtaStyle) btn.classList.add('active');
-    });
-
-    // 8. Decorative Element Grid (NEW)
-    const decorativeElementGrid = document.getElementById('decorativeElementGrid');
-    DECORATIVE_ELEMENTS.forEach(element => {
-        const button = document.createElement('button');
-        button.className = 'option-button decor-option';
-        button.innerHTML = `<img src="${element.src}" alt="${element.name}" style="width:30px;height:30px;object-fit:contain;"><br><small>${element.name}</small>`;
-        button.onclick = () => addDecorativeElement(element);
-        decorativeElementGrid.appendChild(button);
-    });
-
-    // 9. Garland Controls (NEW)
-    const garlandControls = document.getElementById('garlandControls');
-    GARLAND_OPTIONS.forEach(garland => {
-        const button = document.createElement('button');
-        button.className = 'option-button decor-option';
-        button.innerHTML = `<img src="${garland.src}" alt="${garland.name}" style="width:100%;height:30px;object-fit:contain;"><br><small>${garland.name}</small>`;
-        button.onclick = () => addDecorativeGarland(garland);
-        garlandControls.appendChild(button);
-    });
-    
-    // 10. Text Alignment Controls (NEW)
-    const textAlignControls = document.getElementById('textAlignControls');
-    textAlignControls.querySelectorAll('.option-button').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.dataset.align === 'center') btn.classList.add('active'); // Default to center
-    });
-}
-
 // Helper to create option buttons
-function createOptionButton(text, onClickHandler) {
+function createOptionButton(text, onClickHandler, className = 'option-button') {
     const button = document.createElement('button');
     button.textContent = text;
-    button.className = 'option-button';
-    button.onclick = onClickHandler;
+    button.className = className;
+    button.onclick = () => { recordHistory(); onClickHandler(); }; 
     return button;
-}
-
-// Apply an entire theme
-function applyTheme(theme, clickedButton) {
-    currentTextColor = theme.text;
-    currentAccentColor = theme.accent;
-    updateColor('text', theme.text);
-    updateColor('accent', theme.accent);
-    document.getElementById('textColorInput').value = theme.text;
-    document.getElementById('accentColorInput').value = theme.accent;
-
-    document.querySelectorAll('#colorThemePresets .option-button').forEach(btn => btn.classList.remove('active'));
-    clickedButton.classList.add('active');
 }
 
 // Applies font to all relevant text elements of the ACTIVE LAYER
@@ -865,8 +821,9 @@ function updateShape(newShapeClass, clickedButton) {
 
 function toggleLogoBorder(show) {
     const logoEl = document.getElementById('overlayLogo');
+    recordHistory();
     if (show) {
-        logoEl.style.borderWidth = '4px'; // Or restore from preset
+        logoEl.style.borderWidth = '4px';
     } else {
         logoEl.style.borderWidth = '0px';
     }
@@ -906,7 +863,7 @@ function applyFrameClass(newFrameClass) {
 
     // Show/hide corner decor based on class
     decorElements.forEach(el => {
-        el.style.display = (newFrameClass === 'frame-default' || newFrameClass === 'frame-temple' || newFrameClass === 'frame-swirl') ? 'block' : 'none';
+        el.style.display = (newFrameClass === 'frame-default' || newFrameClass === 'frame-temple' || newFrameClass === 'frame-swirl' || newFrameClass === 'frame-artdeco') ? 'block' : 'none';
     });
     currentFrameClass = newFrameClass;
 }
@@ -918,58 +875,17 @@ function updateFrame(newFrameClass, clickedButton) {
     clickedButton.classList.add('active');
 }
 
-function updateColor(type, color) {
-    if (type === 'text') {
-        currentTextColor = color;
-        // Apply to all editable text elements directly
-        document.querySelectorAll('.editable').forEach(el => el.style.color = color);
-    } else if (type === 'accent') {
-        currentAccentColor = color;
-        document.documentElement.style.setProperty('--accent', color);
-        // Also update the corner decor background if visible
-        document.querySelectorAll('.frame-decor').forEach(el => {
-             el.style.borderColor = color;
-             // Only update gradient if it's the default type
-             if (el.style.backgroundImage.includes('linear-gradient')) { // Check if it's already a gradient
-                el.style.background = `linear-gradient(45deg, ${lightenColor(color, 60)}, ${color})`;
-             }
-        });
-    }
-}
-
-function lightenColor(hex, percent) {
-    var f=parseInt(hex.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=(f>>8)&0x00FF,B=f&0x0000FF;
-    return "#"+(0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
-}
-
-// Convert RGB to Hex (for color picker sync)
-function rgbToHex(rgb) {
-    if (!rgb || rgb.indexOf('rgb') === -1) return '#FFFFFF'; // Default for non-rgb or invalid
-    const parts = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-    if (!parts) return '#FFFFFF';
-    delete parts[0];
-    for (let i = 1; i <= 3; ++i) {
-        parts[i] = parseInt(parts[i]).toString(16);
-        if (parts[i].length === 1) parts[i] = '0' + parts[i];
-    }
-    return '#' + parts.join('');
-}
-
-
 // --- OFFER BANNER & CTA BLOCKS (NEW) ---
 function setOfferBannerStyle(styleClass, activateButton = true) {
     const offerBannerLayer = document.getElementById('offerBannerLayer');
     const bannerElement = offerBannerLayer.querySelector('.offer-banner');
     if (!bannerElement) return;
 
-    // Remove existing styles
+    recordHistory();
     bannerElement.classList.remove('banner-ribbon', 'banner-badge', 'banner-simple');
-    
-    // Add new style
     bannerElement.classList.add(styleClass);
     currentOfferBannerStyle = styleClass;
 
-    // Apply colors if they exist
     updateOfferBannerColors();
 
     if (activateButton) {
@@ -985,13 +901,14 @@ function updateOfferBannerColors() {
     const bannerElement = offerBannerLayer.querySelector('.offer-banner');
     if (!bannerElement) return;
 
+    recordHistory();
     const bgColor = document.getElementById('offerBannerBgColor').value;
-    const textColor = document.getElementById('offerBannerTextColor').value;
+    const textColor = '#FFFFFF'; // Keeping text white for contrast
 
     bannerElement.style.backgroundColor = bgColor;
     bannerElement.style.color = textColor;
 
-    // Specific adjustments for ribbon style, if needed (e.g., pseudo-elements)
+    // Specific adjustments for ribbon style (CSS pseudo-elements)
     if (currentOfferBannerStyle === 'banner-ribbon') {
         bannerElement.style.setProperty('--ribbon-color', bgColor);
         bannerElement.style.setProperty('--ribbon-text-color', textColor);
@@ -1003,7 +920,7 @@ function setCTAStyle(styleClass, activateButton = true) {
     const ctaItems = ctaBlockLayer.querySelectorAll('.cta-item');
     if (ctaItems.length === 0) return;
 
-    // Remove all previous style classes from each CTA item
+    recordHistory();
     ctaItems.forEach(item => {
         item.classList.remove('cta-gold', 'cta-green', 'cta-blue');
         item.classList.add(styleClass); // Apply new style
@@ -1021,45 +938,43 @@ function setCTAStyle(styleClass, activateButton = true) {
 function addCtaItem() {
     const ctaBlockGrid = document.querySelector('#ctaBlockLayer .cta-block-grid');
     if (!ctaBlockGrid) return;
+    
+    recordHistory();
+    document.getElementById('ctaBlockLayer').classList.remove('hidden');
+
     const newItem = document.createElement('div');
-    newItem.className = `cta-item editable ${currentFontClass} ${currentCtaStyle}`;
+    newItem.className = `cta-item editable ${currentFontClass} ${currentCtaStyle} ${currentShadow}`;
     newItem.contentEditable = true;
     newItem.dataset.placeholder = "New Offer Here!";
     newItem.style.color = currentTextColor;
-    newItem.style.webkitTextStrokeWidth = currentTextStrokeWidth;
-    newItem.style.webkitTextStrokeColor = currentTextStrokeColor;
-    // Add active shadow for text layers
-    SHADOW_OPTIONS.forEach(o => newItem.classList.remove(o.class));
-    newItem.classList.add(currentShadow);
-
+    
     ctaBlockGrid.appendChild(newItem);
-    newItem.classList.add('empty'); // Apply placeholder initially
-    ctaBlockGrid.style.gridTemplateColumns = `repeat(${Math.min(ctaBlockGrid.children.length, 2)}, 1fr)`; // Max 2 columns
-    showMessage('New CTA item added! Edit its text directly.');
+    newItem.classList.add('empty');
+    ctaBlockGrid.style.gridTemplateColumns = `repeat(${Math.min(ctaBlockGrid.children.length, 2)}, 1fr)`;
+    showMessage('New CTA item added! Drag the layer to position.');
 }
 
 
 // --- DECORATIVE ELEMENTS (NEW) ---
 function addDecorativeElement(elementData) {
     const decorativeLayer = document.getElementById('decorativeElementLayer');
-    decorativeLayer.classList.remove('hidden'); // Ensure layer is visible
-    setActiveLayer('decorativeElementLayer'); // Make it the active layer
+    
+    recordHistory();
+    decorativeLayer.classList.remove('hidden'); 
+    setActiveLayer('decorativeElementLayer', false); 
 
     const newDecor = document.createElement('img');
     newDecor.src = elementData.src;
-    newDecor.className = `draggable-child ${elementData.class}`; // Add a generic class for styling + specific for identification
+    newDecor.className = `draggable-child ${elementData.class}`; 
     newDecor.style.position = 'absolute';
     newDecor.style.width = elementData.defaultWidth || '20%';
-    newDecor.style.height = 'auto'; // Maintain aspect ratio
-    newDecor.style.left = elementData.defaultLeft || '50%';
-    newDecor.style.top = elementData.defaultTop || '50%';
-    newDecor.style.transform = 'translate(-50%, -50%)'; // Center it initially
-
-    // Randomize initial position slightly for multiple additions
-    const randX = Math.random() * 20 - 10; // -10 to +10 percent
+    newDecor.style.height = 'auto'; 
+    
+    const randX = Math.random() * 20 - 10;
     const randY = Math.random() * 20 - 10;
     newDecor.style.left = `calc(${elementData.defaultLeft || '50%'} + ${randX}%)`;
     newDecor.style.top = `calc(${elementData.defaultTop || '50%'} + ${randY}%)`;
+    newDecor.style.transform = 'translate(-50%, -50%)';
 
     decorativeLayer.appendChild(newDecor);
     showMessage(`Added ${elementData.name}. Drag and resize it on the ad!`);
@@ -1067,44 +982,38 @@ function addDecorativeElement(elementData) {
 
 function addDecorativeGarland(garlandData) {
     const decorativeLayer = document.getElementById('decorativeElementLayer');
-    decorativeLayer.classList.remove('hidden'); // Ensure layer is visible
-    setActiveLayer('decorativeElementLayer'); // Make it the active layer
+    
+    recordHistory();
+    decorativeLayer.classList.remove('hidden'); 
+    setActiveLayer('decorativeElementLayer', false); 
 
     const newGarland = document.createElement('img');
     newGarland.src = garlandData.src;
     newGarland.className = `draggable-child decorative-garland ${garlandData.class}`;
     newGarland.style.position = 'absolute';
-    newGarland.style.width = '100%'; // Garlands typically span width
-    newGarland.style.height = 'auto';
     newGarland.style.left = '0%';
-    newGarland.style.top = '0%'; // Default top, will be adjusted by CSS class
     newGarland.style.transform = 'none';
 
-    // Specific positioning for garlands/borders via CSS classes
+    // Positioning based on class
     if (garlandData.class.includes('top')) {
         newGarland.style.top = '0%';
-        newGarland.style.left = '0%';
         newGarland.style.width = '100%';
     } else if (garlandData.class.includes('side')) {
         newGarland.style.top = '0%';
-        newGarland.style.left = '0%'; // Assuming it can be left or right
         newGarland.style.height = '100%';
         newGarland.style.width = 'auto';
     } else if (garlandData.class.includes('bottom')) {
         newGarland.style.bottom = '0%';
-        newGarland.style.left = '0%';
         newGarland.style.top = 'auto';
         newGarland.style.width = '100%';
     } else if (garlandData.class.includes('corner')) {
         newGarland.style.width = '30%';
-        newGarland.style.height = 'auto';
-        newGarland.style.left = 'auto';
-        newGarland.style.top = 'auto';
         newGarland.style.right = '0%';
         newGarland.style.bottom = '0%';
-    } else if (garlandData.class.includes('banner')) { // General banner
+        newGarland.style.top = 'auto';
+        newGarland.style.left = 'auto';
+    } else if (garlandData.class.includes('banner')) {
         newGarland.style.width = '80%';
-        newGarland.style.height = 'auto';
         newGarland.style.left = '50%';
         newGarland.style.top = '50%';
         newGarland.style.transform = 'translate(-50%, -50%)';
@@ -1112,14 +1021,6 @@ function addDecorativeGarland(garlandData) {
     
     decorativeLayer.appendChild(newGarland);
     showMessage(`Added ${garlandData.name}. Drag and resize it on the ad!`);
-}
-
-
-function clearDecorativeElements() {
-    const decorativeLayer = document.getElementById('decorativeElementLayer');
-    decorativeLayer.innerHTML = ''; // Clears all children
-    decorativeLayer.classList.add('hidden'); // Hide the layer if empty
-    showMessage('All decorative elements cleared.');
 }
 
 // Event listener to show placeholder for empty contenteditable fields
